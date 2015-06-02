@@ -10,8 +10,9 @@ How it's done:
 - css/pub_css.php - Load custom css from DB
 - .htaccess - translate filename###.css into a call to pub_css.php?pub=###
 - config/dmm_config.php - functions library and default donfiguration initialization vars
-- smarty/templates/* - tempaltes to be rendered by smarty
-- smarty/libs/plugins/* - tempalte functions
+- smarty/templates/* - templates to be rendered by smarty
+- smarty/libs/plugins/* - template functions
+
 ## Issues
 
 1. Migrate to Symfony - Twig, etc?
