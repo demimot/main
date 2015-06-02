@@ -12,8 +12,13 @@ How it's done
 - smarty/templates/* - tempaltes to be rendered by smarty
 - smarty/libs/plugins/* - tempalte functions
 ## Issues
-1 Migrate to Symfony - Twig, etc?
-2 
+
+1. Migrate to Symfony - Twig, etc?
+2. Remove data retrieving from template functions - must be handled by controllers
+3. define article object - article sections and componnents
+4. article components blocks, order, priority, mandatory... etc
+5. define article pubs relationships
+
 ## Code
 ```php
  $example = 3 + 2;
