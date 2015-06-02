@@ -3,7 +3,8 @@
 Demimot uses: 
 - Smarty Template Engine - http://www.smarty.net
 - Zurb Foundation responsive CSS - http://foundation.zurb.com/
-How it's done
+
+How it's done:
 - index.php - 'pré' front controller
 - header.php - front controller
 - css/pub_css.php - Load custom css from DB
