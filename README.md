@@ -1,9 +1,15 @@
-# main
-## Demimot core
-Evalluating GitHub for versionning of demimot.com projects.
+# DemiMot
+## Intro
+Demimot uses: 
+- index.php - front controller
+- header.php - front controller
+- config/dmm_config.php - functions library and default donfiguration initialization vars
+- smarty/templates/* - tempaltes to be rendered by smarty
+- smarty/libs/plugins/* - tempalte functions
+## Issues
+1 Migrate to Symfony - Twig, etc?
 
-It work both ways.
-
+## Code
 ```php
-$a = 2 * 3;
+ $example = 3 + 2;
 ```
