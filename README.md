@@ -1,6 +1,5 @@
 # main
-Demimot core
-============
+## Demimot core
 Evalluating GitHub for versionning of demimot.com projects.
 
 It work both ways.
