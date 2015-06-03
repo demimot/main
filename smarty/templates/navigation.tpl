@@ -10,7 +10,9 @@
             <section class="top-bar-section dmm-top-bar-section">
             <!-- Right Nav Section -->
                 <ul class="right">
+                    <!--[if !isset($smarty.session.user_id)]--><div class="hide-for-large-up"><!--[/if]-->
                     <li class="dmm-active" style="min-width:5em;"><a href="/?<!--[$LoginMenuUrl]-->"><!--[$LoginMenu]--></a></li>
+                    <!--[if !isset($smarty.session.user_id)]--></div><!--[/if]-->
                     <li class="has-dropdown" style="min-width:4em"><a href="/"><!--[$InfoMenu]--></a>
                         <ul class="dropdown">
                             <li class="dmm-active" style="min-width:12em"><a href="/"><!--[$NewsMenu]--></a></li>

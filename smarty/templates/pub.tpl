@@ -37,6 +37,11 @@
                 </dl>
             </div>
             <div class="show-for-large-up">
+            <!--[if !isset($smarty.session.user_id)]-->
+                <div class="large-2 medium-0 small-0 columns">
+                <!--[include file="login.tpl"]-->
+                </div>
+            <!--[/if]-->
                 <div class="large-2 medium-0 small-0 columns">
                     <h5>This could be a publicity area for Demimot Publications</h5>
                     <p><a href="#" class="small button">Simple Button</a><br/>

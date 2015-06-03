@@ -84,7 +84,9 @@ function post_handler($the_POST)
 
             /* get user_id only on the session HERE. Query user data further down if session.user_id is true */ 
             $_SESSION['user_id'] = intval($row_Recordset1['user_id']);
-            $_return = 1;	
+			$_return = isset($the_POST['frm_pub']) ? "?pub=" . $the_POST['frm_pub'] : ""; 
+			$_return = isset($the_POST['frm_issue']) ? $_return . "&issue=" . $the_POST['frm_issue'] : $_return; 
+            $_return = $_return ? $_return : 1;	
 	        break;
         default:      
     }

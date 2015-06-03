@@ -28,8 +28,9 @@
 			  1 = login form
 			  2 = other form...
 		****/
-		if(post_handler($_POST)){
-            header('Location: /'); /* So one can use "back" to come to this page from other site they navigated to */
+		if($location = post_handler($_POST)){
+			 
+			header('Location: /' . ($location == 1 ? "" : $location));/* So one can use "back" to come to this page from other site they navigated to */
             exit;
 		}
     }
