@@ -23,8 +23,9 @@
                 <div class="large-4 columns">&nbsp;</div>
                 <div class="large-8 columns">
                     <input class="button small large-12" type="submit" value="Ok" /><input type="hidden" name="frm_submit" value=1 />
-                    <!--[if isset($smarty.get.pub)]--><input type="hidden"   name="frm_pub" value=<!--[$smarty.get.pub]--> /><!--[/if]-->
+                    <!--[if isset($smarty.get.piid)]--><input type="hidden"   name="frm_pub" value=<!--[$smarty.get.piid]--> /><!--[/if]-->
                     <!--[if isset($smarty.get.issue)]--><input type="hidden" name="frm_issue" value=<!--[$smarty.get.issue]--> /><!--[/if]-->
+                    <input type="hidden" name="frm_xss" value=<!--[$smarty.session.form_xss]--> />
                 </div>
             </div>
         </div>

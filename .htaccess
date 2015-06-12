@@ -1,13 +1,15 @@
+DirectoryIndex index.php index.html site-down.php
+
 RewriteEngine On
 RewriteBase /
 
 # next line allow dynamic css stlesheets to look like static css files so to be cached on client browsers # 
-RewriteRule ^css/pub_css([^/]*)css$ /css/pub_css.php?pub=$1 [L]
+RewriteRule ^css/pub_css([^/]*)css$ /css/pub_css.php?piid=$1 [L]
 
 AuthType Basic
 
-AuthName Restricted
+AuthName "- Webmaster@demimot.com: Restricted Access"
 
 Require user dmmuser
 AuthUserFile /home/clients/11d15007da6fad8ef81d5aeb81fc72d4/.htpasswd
-AuthGroupFile /home/clients/11d15007da6fad8ef81d5aeb81fc72d4/.htgroup
+#AuthGroupFile /home/clients/11d15007da6fad8ef81d5aeb81fc72d4/.htgroup

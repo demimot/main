@@ -21,6 +21,10 @@
 	    $_SESSION['language'] = $_GET['lang']; 
 	} elseif (!isset($_SESSION['language'])) $_SESSION['language'] = $default_language;
 	
+	if(!isset($_SESSION['form_xss']))	{ // anti xss initialization for any POST forms
+        $_SESSION['form_xss'] = set_form_xss();
+    }
+	
 	/* try to log someone in if requested*/ 
     if ($_SERVER['REQUEST_METHOD'] == 'POST' )
     { 
@@ -40,23 +44,36 @@
 	$smarty->assign('title', "DemiMot");
 	
    // Try to GET the template for the current issue of the current publication
-   if(isset($_GET['pub']) and $_GET['pub']){
-		if($thispub=pub_handler($_GET['pub'])){ 
+   if(isset($_GET['piid']) and $_GET['piid']){
+		if($thispub=pub_handler($_GET['piid'])){ 
 			$smarty->assign('this_pub', $thispub);
 			$smarty->assign('title', $thispub['pub_name'] . "@DemiMot");
-            $_SESSION['pub']=$thispub['pub_issue_id'];
+            $_SESSION['pub_issue_id']=$thispub['pub_issue_id'];
 			
 			/* alterar funçao para que retorne array de artigos, fotos, etc ... */		
 			$this_content = article_handler($thispub['pub_issue_id']);
-			
 			$smarty->assign('this_content', $this_content);
+			
+			/* Get Past issues*/
+			$old_issues = get_old_issues($thispub['pub_id'], $thispub['pub_issue']);
+			$smarty->assign('old_issues', $old_issues);
 			
 			// set template
 			$currenttemplate = 'pub.tpl';
-		}elseif($_GET['pub']="BBBB") { /* to be removed... leftovers from beggining of dev */
+		}elseif($_GET['piid']="BBBB") { /* to be removed... leftovers from beggining of dev */
 	        $currenttemplate = 'test1.tpl';
 		} else $currenttemplate = 'home.tpl';		
-	} else { 
+	} elseif (isset($_GET['artid']) and $_GET['artid']) { /* AND check article ownership or delegation */
+	    /* prepare article stuff to load on the template
+		   New article (empty fields)
+		   Edit article (bring from db)
+		   ...
+		   Approved? flag
+		   Ready? flag
+		   publishing is not done by the authro but by the editor... don't forget to mark article as published, timestamp, etc
+		  */
+        $currenttemplate = "new_article.tpl";
+	} else {
 		$currenttemplate = 'home.tpl';
 	}
     
@@ -79,7 +96,7 @@
 	    /* if logged in */
 		/* links  and menu items */
 		$log_in_out = "Logout";
-		$log_in_out_url = "logout=1";
+		$log_in_out_url = (isset($_GET['piid']) and $_GET['piid']) ? $log_in_out_url = "logout=1&piid=" . $_GET['piid'] : "logout=1";
 		
 		/* load pubs owned by user for admin links etc. */
 		$smarty->assign('user_publications', have_pubs($_SESSION['user_id']));

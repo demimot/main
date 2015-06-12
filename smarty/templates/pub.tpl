@@ -1,9 +1,18 @@
 <div class="row">
     <div class="large-12 medium-12 columns">
         <div class="row">
-            <div class="large-2 medium-1 small-0 columns">&nbsp;</div>
+            <div class="large-2 medium-1 small-0 columns">
+                <div class="row">&nbsp;</div>
+                <div class="row">&nbsp;</div>
+                <!--[if $old_issues[0].pub_issue]-->
+                <h5><!--[$this_pub.pub_name|escape]--></h5><p><!--[if $old_issues[0].pub_issue<$this_pub.pub_issue]-->previous issues:<!--[else]-->other issues<!--[/if]--><!--$old_issues|@var_dump--></p>
+                <!--[foreach name=outer item=pastissue from=$old_issues]-->
+                    <p><a href="?piid=<!--[$pastissue.pub_issue_id|escape]-->"><!--[$pastissue.pub_name|escape]--> - <!--[$pastissue.pub_issue|escape]--></a></p>
+                <!--[/foreach]--> 
+                <!--[/if]-->
+            </div>
             <div class="large-8 medium-10 small-12 columns" style="margin-top: 40px; /* for allowing space below navigation bar */">
-                <a href="?pub=<!--[$this_pub.pub_issue_id|escape]-->&issue=<!--[$this_pub.pub_issue|escape]-->"><h1><strong><!--[$this_pub.pub_name|escape]--></strong></h1>
+                <a href="?piid=<!--[$this_pub.pub_issue_id|escape]-->"><h1><strong><!--[$this_pub.pub_name|escape]--></strong></h1>
                     <h5><!--[$this_pub.pub_mote|escape]--></h5>
                     <p>issue: <!--[$this_pub.pub_issue|escape]--></p>
                 </a>
@@ -28,6 +37,7 @@
                         <!--[if $article_image[0].article_image_filename]-->
                             <!--[include file="article_img.tpl"]-->
                         <!--[/if]-->
+                        <!--[if $article.article_source]--><p><a href="?piid=<!--[$article.article_pub_issue_id|escape]-->" target="_blank">source: <!--[$article.article_source|escape]--></a></p><!--[/if]-->
                         <!--[p_tag_this string=$article.article_body|escape article=$article.article_id|escape]--><!--[$teste]-->
                         
                         </div>

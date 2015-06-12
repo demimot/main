@@ -35,15 +35,15 @@
                 <h3 class="text-center">Search<h5>
                 
                 <!--[foreach name=outer item=featured from=$current_featured]-->      
-                    <div class="small-12 medium-4 large-3 columns"><a href="/?pub=<!--[$featured.pub_issue_id|escape]-->&issue=<!--[$featured.pub_issue|escape]-->">
+                    <div class="small-12 medium-4 large-3 columns"><a href="/?piid=<!--[$featured.pub_issue_id|escape]-->">
                         <!--[assign var="thiscover" value="`$default_img_path``$featured.pub_issue_cover`"]-->
                         <div class="panel dmm-featured-pub" style="background-image:url('<!--[demimot_html_createthumb file=$thiscover naked=true height="200" link=false]-->')">
                             <center><h4 style="color:red; font-weight:700"><!--[$featured.pub_name|escape]--></h2></center>
                         </div></a>
                     </div>
                 <!--[/foreach]-->
-                <div class="small-12 medium-4 large-3 columns"><a href="/?pub=BBBB">
-                          <div class="panel" style="min-height: 200px;background-color:transparent;background-image:url('<!--[demimot_html_createthumb file='img/newsstand-clipart-news_stand_CoolClips_vc015998.jpg' naked=true height="200" link=false html="class='img float'"]-->')"><center><!--<a class="th" role="button" aria-label="Thumbnail" href="/?pub=BBBB">
+                <div class="small-12 medium-4 large-3 columns"><a href="/?piid=BBBB">
+                          <div class="panel" style="min-height: 200px;background-color:transparent;background-image:url('<!--[demimot_html_createthumb file='img/newsstand-clipart-news_stand_CoolClips_vc015998.jpg' naked=true height="200" link=false html="class='img float'"]-->')"><center><!--<a class="th" role="button" aria-label="Thumbnail" href="/?piid=BBBB">
                              <!--<img style="max-height:120px;" src="/img/newsstand-clipart-news_stand_CoolClips_vc015998.jpg" width="150" link=false  class="img float" /></a>--><h2 style="color:red; font-weight:900">BBBB</h2></center>
                           </div></a>
                 </div>

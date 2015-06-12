@@ -20,4 +20,4 @@
 	  
 	  /* Show the template(s) */
 	  $smarty->display('index.tpl'); 
- ?>
+?>

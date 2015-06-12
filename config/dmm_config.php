@@ -1,10 +1,4 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . '/Connections/dmm_db_connection.php'); 
-
-/*	echo "<pre>";
-	var_dump($return);
-	echo "</pre>";
-	exit;
-*/
 	
 ## Session
 If (!isset($session_id)) session_start();
@@ -48,8 +42,12 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
   return $theValue;
 }
 
+/* XSS form protection */
+function set_form_xss(){
+    return sha1(session_id() . rand());
+}
 
-## Anti XSS
+## Anti Injection
 function clean_arrayorstring($recvalue)
 {
 	if (is_array($recvalue))
@@ -69,7 +67,10 @@ function clean_arrayorstring($recvalue)
 // POST
 function post_handler($the_POST)
 {
-	$_return=0;
+    $_return=0;
+	if($_SESSION['form_xss'] != $the_POST['frm_xss']){
+		return $_return;
+	}
     switch ($the_POST['frm_submit']) 
     {
         case 1:
@@ -80,18 +81,19 @@ function post_handler($the_POST)
 			global $dmm_db_connection;
             $query_Recordset1 = "SELECT dmm_users.user_id FROM dmm_users WHERE dmm_users.user_username=" . $this_username . " AND dmm_users.user_pwd=" . $this_password;
             $Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error());
-            $row_Recordset1 = mysql_fetch_assoc($Recordset1);
-
-            /* get user_id only on the session HERE. Query user data further down if session.user_id is true */ 
-            $_SESSION['user_id'] = intval($row_Recordset1['user_id']);
-			$_return = isset($the_POST['frm_pub']) ? "?pub=" . $the_POST['frm_pub'] : ""; 
-			$_return = isset($the_POST['frm_issue']) ? $_return . "&issue=" . $the_POST['frm_issue'] : $_return; 
-            $_return = $_return ? $_return : 1;	
+            if($row_Recordset1 = mysql_fetch_assoc($Recordset1)){
+                /* get user_id only on the session HERE. Query user data further down if session.user_id is true */ 
+                $_SESSION['user_id'] = intval($row_Recordset1['user_id']);
+                $_return = isset($the_POST['frm_pub']) ? "?piid=" . $the_POST['frm_pub'] : ""; 
+                $_return = isset($the_POST['frm_issue']) ? $_return . "&issue=" . $the_POST['frm_issue'] : $_return; 
+                $_return = $_return ? $_return : 1;	
+            }
 	        break;
         default:      
     }
-	unset($_POST);
-	return $_return;
+    unset($_POST);
+    $_SESSION['form_xss'] = set_form_xss();
+    return $_return;
 }
 
 function have_pubs($user_id)
@@ -132,11 +134,22 @@ function pub_handler($pub)
 	return $return;	
 }
 
+function get_old_issues ($pub_id, $last_issue){
+    global $dmm_db_connection;
+    $query_Recordset1 = "SELECT i.pub_issue_id, pub_issue, i.pub_issue_cover, p.pub_name FROM dmm_pub_issues i inner join dmm_pubs p on i.pub_id = p.pub_id WHERE i.pub_id=" . GetSQLValueString($pub_id, "int") . " and i.pub_issue not in(" . GetSQLValueString($last_issue, "int") . ") and i.pub_published order by i.pub_issue desc";
+	//echo $query_Recordset1; exit; 
+    $Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error());
+    while($row_Recordset1 = mysql_fetch_array($Recordset1, MYSQL_ASSOC)) {
+          $return[]=$row_Recordset1;
+    }
+	return $return;	
+}
+
 function article_handler($pub_issue)
 {
     global $dmm_db_connection;
 	$return=array();
-    $query_Recordset1 = "SELECT a.article_id, a.article_title, article_subtitle, article_body, (SELECT pp.pub_name FROM dmm_pub_issues pi INNER JOIN dmm_pubs pp ON pi.pub_id = pp.pub_id WHERE pi.pub_issue_id = a.article_pub_issue_id AND a.article_pub_issue_id!=" . GetSQLValueString($pub_issue, "int") . ") as article_source  FROM dmm_pub_issue_articles i INNER JOIN dmm_articles a ON i.article_id = a.article_id WHERE i.pub_issue_id=" . GetSQLValueString($pub_issue, "int") . "";
+    $query_Recordset1 = "SELECT a.article_id, a.article_title, article_subtitle, article_body, (SELECT pp.pub_name FROM dmm_pub_issues pi INNER JOIN dmm_pubs pp ON pi.pub_id = pp.pub_id WHERE pi.pub_issue_id = a.article_pub_issue_id AND a.article_pub_issue_id!=" . GetSQLValueString($pub_issue, "int") . ") as article_source, a.article_pub_issue_id FROM dmm_pub_issue_articles i INNER JOIN dmm_articles a ON i.article_id = a.article_id WHERE i.pub_issue_id=" . GetSQLValueString($pub_issue, "int") . "";
     $Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error());
     while($row_Recordset1 = mysql_fetch_array($Recordset1, MYSQL_ASSOC)) {
           $return[]=$row_Recordset1;

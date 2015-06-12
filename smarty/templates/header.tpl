@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/foundation.css" />
     <link rel="stylesheet" href="css/dmm_foundation.css" />
 <!--[if isset($this_pub.pub_issue)]-->
-    <link rel="stylesheet" href="css/pub_css<!--[$smarty.session.pub]-->.css" />
+    <link rel="stylesheet" href="css/pub_css<!--[$smarty.session.pub_issue_id]-->.css" />
 <!--[/if]-->
     <script src="js/modernizr.js"></script>
 </head>
