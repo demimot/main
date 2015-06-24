@@ -5,7 +5,7 @@
 	  
 	  $smarty->assign('name', 'DemiMot');
 
-      /* Clean up all POST/GET variable agains code/SQL injection; */ 
+      /* Clean up all POST/GET variable agains JS/SQL injection; */ 
 
       foreach($_POST as $key => $value) {
           $_POST[$key] = clean_arrayorstring($value);
@@ -18,6 +18,6 @@
       /* the actual front controller to load everything a page could ever want */
       include "dmm-header.php";
 	  
-	  /* Show the template(s) */
+	  /* Show View */
 	  $smarty->display('index.tpl'); 
 ?>

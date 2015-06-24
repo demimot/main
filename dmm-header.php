@@ -1,18 +1,12 @@
 <?php
     /*************************************************************************
 	
-	   This would be our front controler
-	   
-	   It should be loaded on each request and
-	   
+	   This is our front controler
+	   It is loaded on each request and
 	   Treat all POST/GET request to deceid what page to show
-	   
 	   populate all variables that page might need (content, styles, meta-data, links...)
-	   
 	   choose which template to load (also a variable to be populated)
-	   
 	   make everything available to smarty
-	   
 	   
 	 *************************************************************************/
 	
@@ -33,82 +27,148 @@
 			  2 = other form...
 		****/
 		if($location = post_handler($_POST)){
-			 
-			header('Location: /' . ($location == 1 ? "" : $location));/* So one can use "back" to come to this page from other site they navigated to */
+			header('Location: ' . $_SERVER['REQUEST_URI']);/* So one can use "back" to come to this page from other site they navigated to */
             exit;
 		}
     }
-
-    $smarty->assign('teste', "<p><strong>injection test</strong> css from pub_css.php - This line content is being set on <strong>". __FILE__ . "</strong> line <strong>" . __LINE__ . "</strong></p>");
 	
 	$smarty->assign('title', "DemiMot");
 	
+	// default template...
+	$currenttemplate = 'home.tpl';
+    if(isset($_GET['ta']) and $_GET['ta']){
+        switch ($_GET['ta']) {
+			case 1:
+			case 2:
+			case 3:
+			    if($thispub=get_pub_by_slug($_GET['slug'], $_GET['pid'])){ 
+			        $smarty->assign('this_pub', $thispub);
+			        $smarty->assign('title', $thispub['pub_name'] . "@DemiMot");
+                    $_SESSION['pub_issue_id']=$thispub['pub_issue_id']; 
+        			/* Get Past issues*/
+
+		        	$old_issues = get_old_issues($thispub['pub_id'], $thispub['pub_issue']);
+			        $smarty->assign('old_issues', $old_issues);
+					
+   				}else{
+      	            header("Location: " . $_SERVER['REQUEST_URI'] . "/page-not-found");
+                    exit();
+				}
+				
+			    if(isset($_GET['aslug']) and $_GET['aslug']) {
+    			    if($this_content = get_article_by_pub_issue_slug($thispub['pub_issue_id'], $_GET['aslug'])){	
+	    		        $smarty->assign('this_content', $this_content);
+		    		    $currenttemplate = 'article.tpl';
+			    	}else{
+        	            //header('HTTP/1.0 404 Not Found');
+                        header("Location: " . $_SERVER['REQUEST_URI'] . "/page-not-found");
+                        exit();
+				    }
+			    }
+				else
+				{
+					$this_content = article_handler($thispub['pub_issue_id']);
+			        $smarty->assign('this_content', $this_content);
+				    $currenttemplate = 'pub.tpl';	
+				}
+				break;
+			case 100:
+			    if (isset($_GET['pubid']) and $_GET['pubid']){
+	        	    if($_GET['pubid']=="new"){
+			            $currenttemplate = "new_pub.tpl";
+                    } 
+				}
+                break;
+			case 200:
+			    if (isset($_GET['artid']) and $_GET['artid'] and isset($_SESSION['user_id'])){
+	        	    if($_GET['artid']=="new"){
+			            $currenttemplate = "new_article.tpl";
+                    } 
+				}
+                break;
+			case 201:
+			    if (isset($_GET['artid']) and $_GET['artid'] and isset($_SESSION['user_id'])){
+					if($this_article = get_this_article($_GET['artid'])) {
+		                $smarty->assign('this_article', $this_article);
+                        $currenttemplate = "new_article.tpl";		
+		                $smarty->assign('no_edit', 0);
+                        $currenttemplate = "new_article.tpl";
+		            }
+				}
+                break;
+			case 202:
+			    if (isset($_GET['artid']) and $_GET['artid'] and isset($_SESSION['user_id'])){
+					if($this_article = get_this_article($_GET['artid'])) {
+		                $smarty->assign('this_article', $this_article);
+		                $smarty->assign('no_edit', 1);
+                        $currenttemplate = "new_article.tpl";
+		            }
+				}
+                break;
+            case 404:
+			    header("HTTP/1.0 404 Not Found");
+                $currenttemplate = 'page404.tpl';
+                break;
+            case 900:
+                $currenttemplate = 'login.tpl';
+                break;
+            case 901:
+                if(isset($_SESSION['user_id'])) {
+					unset($_SESSION['user_id']);
+					$location = $_GET['loc'];
+		    		header("Location: " . $location);
+                    exit();
+				}
+                break;
+			default:
+    		   header("Location: /page-not-found");
+               exit();	
+			
+        }	
+	}
+	
    // Try to GET the template for the current issue of the current publication
-   if(isset($_GET['piid']) and $_GET['piid']){
+   // backward comnpatibilituy only
+   // don't want to use it 
+   /*
+   if((isset($_GET['piid']) and $_GET['piid'])){
 		if($thispub=pub_handler($_GET['piid'])){ 
 			$smarty->assign('this_pub', $thispub);
 			$smarty->assign('title', $thispub['pub_name'] . "@DemiMot");
-            $_SESSION['pub_issue_id']=$thispub['pub_issue_id'];
-			
-			/* alterar funçao para que retorne array de artigos, fotos, etc ... */		
-			$this_content = article_handler($thispub['pub_issue_id']);
-			$smarty->assign('this_content', $this_content);
-			
-			/* Get Past issues*/
+            $_SESSION['pub_issue_id']=$thispub['pub_issue_id']; 
+    	    // alterar funçao para que retorne array de artigos, fotos, etc ... 	
+		    $this_content = article_handler($thispub['pub_issue_id']);
+			    $smarty->assign('this_content', $this_content);
+				$currenttemplate = 'pub.tpl';
+			// Get Past issues
 			$old_issues = get_old_issues($thispub['pub_id'], $thispub['pub_issue']);
 			$smarty->assign('old_issues', $old_issues);
-			
-			// set template
-			$currenttemplate = 'pub.tpl';
-		}elseif($_GET['piid']="BBBB") { /* to be removed... leftovers from beggining of dev */
-	        $currenttemplate = 'test1.tpl';
-		} else $currenttemplate = 'home.tpl';		
-	} elseif (isset($_GET['artid']) and $_GET['artid']) { /* AND check article ownership or delegation */
-	    /* prepare article stuff to load on the template
-		   New article (empty fields)
-		   Edit article (bring from db)
-		   ...
-		   Approved? flag
-		   Ready? flag
-		   publishing is not done by the authro but by the editor... don't forget to mark article as published, timestamp, etc
-		  */
-        $currenttemplate = "new_article.tpl";
-	} else {
-		$currenttemplate = 'home.tpl';
-	}
+		} 
+	} */
     
-	if(isset($_GET['login']) and $_GET['login'] and !$_SESSION['user_id']){
-        $currenttemplate = 'login.tpl';
-		$_GET['login']=0;
-		unset($_GET['login']);
-	} elseif(isset($_GET['logout']) and $_GET['logout']){
-		$_GET['logout']=0;
-		unset($_GET['logout']);
-		$smarty->assign('user_id',1);
-		if(isset($_SESSION['user_id'])){
-		    unset($_SESSION['user_id']);
-			/*session_unregister('user_id'); - deprecated */
-		};
-	}
-    
+
+	
     /* Now that we know if one is loged in or not ...*/
     if(isset($_SESSION['user_id']) and $_SESSION['user_id']){ 
 	    /* if logged in */
 		/* links  and menu items */
 		$log_in_out = "Logout";
-		$log_in_out_url = (isset($_GET['piid']) and $_GET['piid']) ? $log_in_out_url = "logout=1&piid=" . $_GET['piid'] : "logout=1";
+		$log_in_out_url = "/logout?loc=" . urlencode($_SERVER['REQUEST_URI']);
 		
 		/* load pubs owned by user for admin links etc. */
 		$smarty->assign('user_publications', have_pubs($_SESSION['user_id']));
 		
         /* Load common user data */
         $smarty->assign('dmm_user', get_user_data($_SESSION['user_id']));
+		
+        $smarty->assign('your_unpublished_articles', get_unpublished_articles_by_author($_SESSION['user_id']));
+		$smarty->assign('your_published_articles', get_published_articles_by_author($_SESSION['user_id']));
         
     }
 	else
 	{   /* links and menu items */
 		$log_in_out = "Login";
-		$log_in_out_url = "login=1";
+		$log_in_out_url = "login";
 	}
 
     $smarty->assign('LoginMenuUrl', $log_in_out_url );
@@ -147,6 +207,8 @@
 	/* smarty default image path */
     $smarty->assign('default_img_path', default_image_dir ());	
 	
+	/* test slugfier */
+	$smarty->assign('teste', "<p>" . toAscii("o homem@casa das nações l'a !  Aparece sempre mal. Vestido","'") . " remove this on " . __FILE__ . "</strong> line <strong>" . __LINE__ . "</strong></p>");
 	
 	switch ($_SESSION['language']) {
     case "fr":

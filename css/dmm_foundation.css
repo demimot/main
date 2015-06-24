@@ -1,0 +1,113 @@
+.row {
+  max-width: 100%; }
+
+.fixed.expanded:not(.dmm-top-bar) .dmm-top-bar-section {
+  margin-top: 25px; }
+
+.dmm-top-bar {
+  height: 25px;
+  line-height: 25px;
+  background: #555555; }
+  .dmm-top-bar .name {
+    height: 25px; }
+    .dmm-top-bar .name h1 {
+      line-height: 25px; }
+    .dmm-top-bar .toggle-topbar a {
+      height: 25px;
+      line-height: 25px; }
+    .dmm-top-bar.expanded .title-area {
+      background: #555555; }
+
+  .dmm-top-bar-section ul {
+    background: #555555; }
+
+  .dmm-top-bar-section ul li > a {
+    padding: 2.5px 0 2.5px 0; /* changed from -- padding: 12px 0 12px 0; -- on 29/4/2015 julio - to reduce menu line height on small deveices */
+    background: #555555; }
+
+    .dmm-top-bar-section ul li > a.button {
+      background: #555555 "/008cba/"; }
+      
+  .dmm-top-bar-section ul li.active > a {
+    background: #555555 "/008cba/"; }
+    
+    .dmm-top-bar-section ul li.active > a:hover {
+      background: #222222; }
+
+      .dmm-top-bar-section .dropdown li a {
+        font-weight: normal;
+        padding: 2.5px 15px; } /* changed from -- padding: 8px 15px; -- on 29/4/2015 julio - to reduce line height on sub menus */
+
+@media only screen and (min-width: 40.063em) {
+  .dmm-top-bar {
+    background: #555555; }
+    .dmm-top-bar.expanded {
+      background: #555555; }
+
+  .contain-to-grid .dmm-top-bar {
+    max-width: 100% !important; /* don't want to restrict on dmm itself*/
+  }
+
+     .dmm-top-bar-section li:not(.has-form) a:not(.button) {
+      line-height: 25px;
+      background: #555555; }
+      .dmm-top-bar-section .has-dropdown > a:after {
+        top: 14.5px; }
+
+    .dmm-top-bar-section .has-dropdown .dropdown li.has-dropdown > a:after {
+      margin-top: -12px; /* changed from -2px --> sets the top for the char "»" in a menu item with submenus */
+    }
+    
+    .dmm-top-bar-section .dropdown {
+      background: #555555 "/transparent/"; }
+      
+      .dmm-top-bar-section .dropdown li a {
+        background: #555555; }
+        
+      .dmm-top-bar-section .dropdown li label {
+        background: #555555; }
+      .dmm-top-bar-section .dropdown li .dropdown { background: #555555;
+      }
+
+    .dmm-top-bar-section > ul > .divider, .dmm-top-bar-section > ul > [role="separator"] {
+      height: 25px; }
+      
+    .dmm-top-bar-section .has-form {
+      background: #555555;
+      height: 25px; }
+
+
+  .no-js .dmm-top-bar-section ul li:active > a {
+    background: #555555; } }
+    
+
+/* Panels */
+.dmm-panel {
+  background: #D6D0C4;   }
+
+nav.tab-bar {
+  background: #555555; }
+  
+.left-off-canvas-menu {
+  background: #555555; }
+
+.right-off-canvas-menu {
+  background: #555555; }
+
+/* Foundation Dropdowns */
+.f-dropdown {
+  background: #555555 "white"; }
+  
+.dmm-active {
+    background:#000000; }
+    
+.dmm-featured-pub {
+    min-height:200px;
+    background-color:transparent; 
+    background:no-repeat center;
+    }
+    
+
+.clearing-assembled .clearing-container .carousel > ul {
+    width: auto !important;
+    }

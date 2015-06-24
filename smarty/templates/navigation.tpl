@@ -1,7 +1,6 @@
 <div class="fixed">
     <div class="row">
     <div class="large-12 columns">
-    
         <nav class="top-bar dmm-top-bar" data-topbar>
             <ul class="title-area">
                 <li class="name"><h1><a href="/"><!--[$name]--></a></h1></li>
@@ -11,7 +10,7 @@
             <!-- Right Nav Section -->
                 <ul class="right">
                     <!--[if !isset($smarty.session.user_id)]--><div class="hide-for-large-up"><!--[/if]-->
-                    <li class="dmm-active" style="min-width:5em;"><a href="/?<!--[$LoginMenuUrl]-->"><!--[$LoginMenu]--></a></li>
+                    <li class="dmm-active" style="min-width:5em;"><a href="<!--[$LoginMenuUrl]-->"><!--[$LoginMenu]--></a></li>
                     <!--[if !isset($smarty.session.user_id)]--></div><!--[/if]-->
                     <li class="has-dropdown" style="min-width:4em"><a href="/"><!--[$InfoMenu]--></a>
                         <ul class="dropdown">
@@ -45,15 +44,10 @@
                         </a>
                     </li>
             </ul>
-            <!-- Left Nav Section -->
-            <!-- <ul class="left">
-                <li><a href="#">Left Nav Button</a></li>
-            </ul> -->
           </section>
         </nav>
     </div>
     </div>
     <div class="row">
-    <div class="large-12 columns">&nbsp;<!--[myfunc assign='vidalouca' passtext='']--><!--[$vidalouca]--></div>
 </div>
 </div>

@@ -57,6 +57,7 @@
 			  made cache path changeable (BF & MG)
  * 2004-12-01 New link, hint, quality and type parameter (CE)
  * 2004-12-02 Intergrated UnsharpMask (CE)
+ * 2015-06-22 Added "/" to the return (lines 334, 433 and 436) to make sure the img path is always from document root folder (for urls like fool/asdf/asd not to fail loading thumbnails (Julio Soares)
  * -------------------------------------------------------------
  */
  
@@ -154,7 +155,7 @@ function smarty_function_demimot_html_createthumb($params, &$smarty) {
 	### &Uuml;bergebene Parameter auswerten und verifizieren
 	// itevo: changed
 	//if (empty($params['cache'])) $_CONFIG['cache'] = 'images/cache/';
-	$_CONFIG['cache'] = default_image_dir () . '/images_cache/';
+	$_CONFIG['cache'] = default_image_dir () . 'images_cache/';
 	// else $_CONFIG['cache'] = $params['cache'];
 	// /itevo
 	// itevo, /Go
@@ -330,7 +331,7 @@ function smarty_function_demimot_html_createthumb($params, &$smarty) {
             return;
         }
         else {
-            return $returner;        
+            return "/" . $returner;        
         }      			
 		//return $returner;
 	}
@@ -429,10 +430,10 @@ function smarty_function_demimot_html_createthumb($params, &$smarty) {
 	usleep(1500);
 
    	if (isset($params['assign'])) {
-        $smarty->assign($params['assign'], $returner);
+        $smarty->assign($params['assign'], "/" . $returner);
     }
     else {
-        return $returner;        
+        return "/" . $returner;        
     }      	
 
 	//return $returner;

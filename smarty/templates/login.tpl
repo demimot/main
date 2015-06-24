@@ -1,5 +1,5 @@
-<div class="row">&nbsp;</div><div class="row">&nbsp;</div>
-<form action="/index.php" method="post">
+<div class="panel callout" style="margin-top: 40px;">
+<form action="" method="post">
     <div class="row">
         <div class="large-12 columns">
             <h5>Login na DemiMot</h5>
@@ -31,3 +31,4 @@
         </div>
     </div>
 </form>
+</div>
