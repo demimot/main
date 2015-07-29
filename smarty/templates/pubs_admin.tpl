@@ -5,7 +5,7 @@
 <h6 class="subheader">Existing publications:</h6>
 <ul class="no-bullet">
   <!--[foreach name=externo item=existing_publications from=$user_publications]-->
-    <li><small><a href="/?pubadmid=<!--[$existing_publications.pub_id|escape]-->"><!--[$existing_publications.pub_name|escape]--> - <!--[$existing_publications.pub_country|escape]--> - <!--[$existing_publications.pub_language|escape]--></a></small></li>
+    <li><small><a href="/admin-pub-<!--[$existing_publications.pub_id|escape]-->"><!--[$existing_publications.pub_name|escape]--> - <!--[$existing_publications.pub_country|escape]--> - <!--[$existing_publications.pub_language|escape]--></a></small></li>
   <!--[/foreach]-->
 </ul>
 </div>

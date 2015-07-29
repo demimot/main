@@ -1,5 +1,5 @@
 <div class="panel callout" style="margin-top: 40px;">
-<form action="" method="post">
+<form action="/" method="post">
     <div class="row">
         <div class="large-12 columns">
             <h5>Login na DemiMot</h5>
@@ -22,13 +22,15 @@
             <div class="row">
                 <div class="large-4 columns">&nbsp;</div>
                 <div class="large-8 columns">
-                    <input class="button small large-12" type="submit" value="Ok" /><input type="hidden" name="frm_submit" value=1 />
-                    <!--[if isset($smarty.get.piid)]--><input type="hidden"   name="frm_pub" value=<!--[$smarty.get.piid]--> /><!--[/if]-->
-                    <!--[if isset($smarty.get.issue)]--><input type="hidden" name="frm_issue" value=<!--[$smarty.get.issue]--> /><!--[/if]-->
+                    <input class="button small large-12" type="submit" value="Ok" />
+                    <input type="hidden" name="frm_submit" value=1 />
                     <input type="hidden" name="frm_xss" value=<!--[$smarty.session.form_xss]--> />
+                    <input type="hidden" name="called_from" value=<!--[$called_uri]--> />
                 </div>
             </div>
         </div>
     </div>
 </form>
+<div class="row">&nbsp;</div>
+<p><a href="/signup">Registration</a></p>
 </div>

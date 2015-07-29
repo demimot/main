@@ -10,6 +10,7 @@
 <!--[if isset($this_pub.pub_issue)]-->
     <link rel="stylesheet" href="/css/pub_css<!--[$smarty.session.pub_issue_id]-->.css" />
 <!--[/if]-->
+    <link rel="shortcut icon" href="/favicon.ico" />
     <script src="/js/modernizr.js"></script>
 </head>
 <body>

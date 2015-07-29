@@ -1,5 +1,6 @@
 <div class="large-8 medium-10 small-12 columns" style="margin-top: 40px; /* for allowing space below navigation bar */">
-<form action="/index.php" method="post">
+<div class="panel<!--[if $smarty.get.artid=='new']--> callout<!--[/if]-->">
+<form action="" method="post">
     <div class="row">
         <div class="large-12 columns">
             <h5>Article</h5>
@@ -45,4 +46,5 @@
         </div>
     </div>
 </form>
+</div>
 </div>
