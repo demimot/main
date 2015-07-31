@@ -139,9 +139,11 @@ function post_handler($the_POST)
 				}
 			
 			 } else {
-                echo "<pre>" ;
-			    var_dump($the_POST);
-			    echo "</pre>"; exit;
+                echo "<pre>" ; 
+				var_dump($the_POST);
+			    echo "</pre>";
+				echo "File: " . __FILE__ . "line: " . __LINE__ ;
+				exit;
 			}
 			break;		
 		case 24:
@@ -232,11 +234,11 @@ function get_pub_by_slug($slug, $pid=NULL)
 	$return=array();
     global $dmm_db_connection; 
 	if(is_null($pid)){
-        $query_Recordset1 = "SELECT i.pub_id, i.pub_issue_id, i.pub_issue, p.pub_name, p.pub_mote, p.pub_slug, i.pub_issue_cover FROM dmm_pub_issues i inner join dmm_pubs p on i.pub_id = p.pub_id WHERE i.pub_issue_id IN (
+        $query_Recordset1 = "SELECT i.pub_id, i.pub_issue_id, i.pub_issue, i.pub_issue_logo, p.pub_name, p.pub_mote, p.pub_slug, i.pub_issue_cover FROM dmm_pub_issues i inner join dmm_pubs p on i.pub_id = p.pub_id WHERE i.pub_issue_id IN (
 SELECT max(pub_issue_id) as pub_issue_id
 FROM dmm_pub_issues WHERE pub_published group by pub_id) and p.pub_slug=" . GetSQLValueString($slug, "text") . " limit 1";
 	} else {
-		$query_Recordset1 = "SELECT i.pub_id, i.pub_issue_id, i.pub_issue, p.pub_name, p.pub_mote, p.pub_slug, i.pub_issue_cover FROM dmm_pub_issues i inner join dmm_pubs p on i.pub_id = p.pub_id WHERE i.pub_issue=" . GetSQLValueString($pid, "int") . " and pub_published and p.pub_slug=" . GetSQLValueString($slug, "text") . " limit 1";
+		$query_Recordset1 = "SELECT i.pub_id, i.pub_issue_id, i.pub_issue, i.pub_issue_logo, p.pub_name, p.pub_mote, p.pub_slug, i.pub_issue_cover FROM dmm_pub_issues i inner join dmm_pubs p on i.pub_id = p.pub_id WHERE i.pub_issue=" . GetSQLValueString($pid, "int") . " and pub_published and p.pub_slug=" . GetSQLValueString($slug, "text") . " limit 1";
 	}
     $Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error());
     if($row_Recordset1 = mysql_fetch_assoc($Recordset1))

@@ -72,7 +72,6 @@
     <div class="row">
         <div class="large-12 columns">
             <h6>Default settings: <!--[$this_publication.pub_name|escape]--></h6>
-            <p>CSS</p>
             <div class="large-4 columns" >
                 <form action="" method="post">
                 <div class="row">
@@ -134,7 +133,7 @@
                 </div>
                 <!--[if $this_publication.pub_logo]-->
                 <div class="row">
-                    <img src="<!--[demimot_html_createthumb file="`$default_img_path``$this_publication.pub_logo`" naked=true height="100" link=false]-->" alt="$this_publication.pub_name" name="logo" />
+                    <img src="/<!--[$default_img_path]--><!--[$this_publication.pub_logo]-->" alt="$this_publication.pub_name" name="logo" />
                 </div>
                 <!--[/if]-->
                 <div class="row">

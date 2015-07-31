@@ -1,0 +1,12 @@
+/* PHP */
+echo "<pre>" ; 
+var_dump($the_POST);
+echo "</pre>";
+echo "File: " . __FILE__ . "line: " . __LINE__ ;
+exit;
+
+/* Smarty */
+<pre>
+<!--[$old_issues|@var_dump]-->
+<!--[$smarty.template]-->
+</pre>

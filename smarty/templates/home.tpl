@@ -1,7 +1,7 @@
 <div class="large-8 medium-10 small-12 columns">
     <div class="callout panel" style="margin-top: 40px;">
         <h1>Seja bem-vindo à DemiMot <!--[$dmm_user.user_nickname|escape]-->!!!</h1>
-        <p>A sua plataforma para criação de Jornais e revistas de qualidade</p> <pre> <!--$dmm_user|@var_dump-->  </pre>
+        <p>A sua plataforma para criação de Jornais e revistas de qualidade</p>
     </div><hr />
     <div class="block-grid">
         <center><img class="center" src="/css/img/newsstand-clipart-newsstand_CoolClips_vc010005.jpg" width="375" height="316" alt="newsstand" longdesc="http://www.demimot.com"></center>
