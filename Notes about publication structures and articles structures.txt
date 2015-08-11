@@ -1,0 +1,140 @@
+Publicação
+    Tipo
+		Jornais
+			Seções (cadernos)
+				Peso/Ordem
+				Colunas
+					Artigos Originais
+						Elementos
+							Peso/Ordem
+				Artigos Originais
+					Elementos
+						Peso/Ordem
+				Artigos Reproduzidos
+					Elementos
+						Peso/Ordem
+		Revistas
+			Seções
+				Peso/Ordem
+				Colunas
+					Peso/Ordem
+					Artigos Originais
+						Elementos
+							Peso/Ordem
+				Artigos Originais
+					Peso/Ordem
+					Elementos
+						Peso/Ordem
+				Artigos Reproduzidos
+					Peso/Ordem
+					Elementos
+						Peso/Ordem
+		Livros
+			Seções (capítulos)
+				Artigo Original
+					Peso/Ordem
+					Elementos
+						Peso/Ordem
+			Artigos Originais
+				Peso/Ordem
+                Elementos
+					Peso/Ordem
+	Audiencia
+		gratis - anyone can read
+		paga - so quem pagou (tem que estar logado)
+			por exemplar
+			por assinatura (período)
+	
+Artigo
+	Título
+	Teasing
+	Subtítulo(s)
+	Bloco(s) de texto
+		Paragrafos
+		Especiais
+			Citação(/ões)
+			Nota(s)
+			Referência(s)
+			Ordem/Peso
+		Imagem(/ens)
+			Arquivo
+			Legenda
+			Copyright
+			Ordem/Peso (importância)
+	Elementos (threads)
+		Encadeado(s) (Subtítulos, blocos de texto, imagens, etc em sequencia definida pelo autor como: subtítulo 1, texto, texto, texto, subtítulo 2, texto, foto1, texto, subtítulo 3, foto, texto, referências,...)
+			Peso
+			Ordem
+		Livre(s)
+			Peso
+			Ordem
+			
+template Jornais e Revistas
+Primeira página exemplo
+
+Na primeira página apenas artigos de peso Zero, de seções de peso Zero, vão aparecer.
+Por ordem de seção e peso.
+
+<linha peso=0>   // maior prioridade
+	<Seção "Nome1" peso=0>
+		<Artigo "tituloX" peso=0 ordem=0>
+			...
+		</Artigo>
+		<Artigo "tituloY" peso=0 ordem=1>
+			...
+		</Artigo>
+		...
+	</Seção>
+</linha>
+
+Não... precisa peso 0, 1, 2 e, talvez, 3
+Não... esquecer a seção... é por artigo a seção vem por consequencia do artigo pertencer a ela... acho que vai ficar melhor
+- O numero de artigos peso 0 define quantos artigos vao haver na(s) linha(s) de peso 0
+	no maximo dois por linha (arbitrário, depende do css) por exemplo
+- O numero de atigos de peso 1 define quantos artigos vao haver na(s) linhas de peso 1 
+	logo abaixo das de peso 0
+	No maximo 3 por linha (arbitrário, depende do css) por exemplo
+- O numero de atigos de peso 2 define quantos artigos vao haver na(s) linhas de peso 2 
+	logo abaixo das de peso 1
+	No maximo 5 por linha (arbitrário, depende do css) por exemplo
+...
+- no template então, aparece pequeno (por exemplo) a seção, depois grande o título, o teasing (ou, na falta, os primeiro(s) parágrafo(s)), imagem e elementos com peso 0 no artigo...
+	
+???
+
+
+
+<linha peso=0>   // maior prioridade
+	<Seção "Nome1" peso=0>
+		<Artigo "tituloX" peso=0 ordem=0>
+			...
+		</Artigo>
+		<Artigo "tituloY" peso=0 ordem=1>
+			...
+		</Artigo>
+		...
+	</Seção>
+</linha>
+
+<linha peso=1>   // segunda maior prioridade
+	<Seção "Nome2" peso=1>
+		<Artigo "tituloA" peso=0 ordem=0>
+			...
+		</Artigo>
+		<Artigo "tituloB" peso=0 ordem=1>
+			...
+		</Artigo>
+		...
+	</Seção>
+<linha>
+<linha peso=2>   // segunda maior prioridade
+	<Seção "Nome3" peso=1>
+		<Artigo "tituloZ" peso=0 ordem=0>
+			...
+		</Artigo>
+		<Artigo "tituloV" peso=0 ordem=1>
+			...
+		</Artigo>
+		...
+	</Seção>
+<linha>

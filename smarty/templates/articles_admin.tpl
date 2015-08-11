@@ -5,7 +5,7 @@
 <h6 class="subheader">Unpublished articles:</h6>
 <ul class="no-bullet">
   <!--[foreach name=externo item=unpub_article from=$your_unpublished_articles]-->
-    <li><small><a href="/edit-article-<!--[$unpub_article.article_id|escape]-->"><!--[$unpub_article.article_title|escape]--> <!--[if $unpub_article.article_source]--> - <!--[$unpub_article.article_source|escape]--><!--[/if]--></a></small></li>
+    <li><small><a href="/edit-article-<!--[$unpub_article.article_id|escape]-->"><!--[$unpub_article.article_title|escape]--> <!--[if $unpub_article.article_source]--> - <!--[$unpub_article.article_source|escape]--> - issue: <!--[$unpub_article.pub_issue|escape]--><!--[/if]--></a></small></li>
   <!--[/foreach]-->
 </ul>
 </div>

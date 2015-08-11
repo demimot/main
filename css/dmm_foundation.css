@@ -111,3 +111,8 @@ nav.tab-bar {
 .clearing-assembled .clearing-container .carousel > ul {
     width: auto !important;
     }
+
+.dmm_p_margin{
+    margin-left:10px;
+    margin-right:10px;
+}

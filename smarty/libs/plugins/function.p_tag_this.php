@@ -31,7 +31,7 @@ function parseTagsRecursive($input)
     $regex = '/\n(\s*\n)+/';
 
     if (is_array($input)) {
-        $input = '</hr ></p><!--[$placehold' . $count_p . ']--><p>'.$input[1];
+        $input = '</hr ></p><!--[#placehold' . intval($count_p) . ']--><p>'.$input[1];
 		$count_p++;
     }
 

@@ -1,6 +1,6 @@
 <?php
     /*************************************************************************
-	   This is our front controler
+	   This is our 'front controler'
 	   It is loaded on each request and
 	   Treat all POST/GET request to deceid what page to show
 	   populate all variables that page might need (content, styles, meta-data, links...)
@@ -13,10 +13,6 @@
 	    $_SESSION['language'] = $_GET['lang']; 
 	} elseif (!isset($_SESSION['language'])) $_SESSION['language'] = DMM_DEFAULT_LANGUAGE;
 	
-	if(!isset($_SESSION['form_xss']))	{ // anti xss initialization for any POST forms
-        $_SESSION['form_xss'] = set_form_xss();
-    }
-	
 	/* try to log someone in if requested*/ 
     if ($_SERVER['REQUEST_METHOD'] == 'POST' )
     { 
@@ -27,6 +23,10 @@
             exit;
 		}
     }
+	else
+	{
+		$_SESSION['form_xss'] = set_form_xss();
+	}
 	
 	$smarty->assign('title', "DemiMot");
 	
@@ -37,7 +37,7 @@
 			case 1:
 			case 2:
 			case 3:
-			    if($thispub=get_pub_by_slug($_GET['slug'], $_GET['pid'])){ 
+			    if($thispub = get_pub_by_slug($_GET['slug'], $_GET['pid'])){ 
 			        $smarty->assign('this_pub', $thispub);
 			        $smarty->assign('title', $thispub['pub_name'] . "@DemiMot");
                     $_SESSION['pub_issue_id']=$thispub['pub_issue_id']; 
@@ -178,12 +178,12 @@
         }	
 	}
 
-	
+
     /* Now that we know if one is loged in or not ...*/
     if(isset($_SESSION['user_id']) and $_SESSION['user_id']){ 
-	    /* if logged in */
-		/* links  and menu items */
-		$log_in_out = "Logout";
+        /* if logged in */
+        /* links  and menu items */
+        $log_in_out = "Logout";
 		$log_in_out_url = "/logout?loc=" . urlencode($_SERVER['REQUEST_URI']);
 		
 		/* load pubs owned by user for admin links etc. */

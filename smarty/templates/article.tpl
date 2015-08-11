@@ -1,8 +1,12 @@
 <div class="large-8 medium-10 small-12 columns" style="margin-top: 40px; /* for allowing space below navigation bar */">
-    <a href="/read-<!--[$this_pub.pub_slug|escape]-->/issue-<!--[$this_pub.pub_issue|escape]-->"><h1><strong><!--[$this_pub.pub_name|escape]--></strong></h1>
-        <h5><!--[$this_pub.pub_mote|escape]--></h5>
-        <p>issue: <!--[$this_pub.pub_issue|escape]--></p>
-    </a>
+    <div class="pub_banner">
+    <a href="/read-<!--[$this_pub.pub_slug|escape]-->/issue-<!--[$this_pub.pub_issue|escape]-->">
+        <!--[if $this_pub.pub_issue_logo]--><div class="pub_issue_logo" style="background:transparent url('/<!--[$default_img_path]--><!--[$this_pub.pub_issue_logo]-->');">&nbsp;</div><!--[/if]-->
+        <h1 class="pub_banner"><strong><!--[$this_pub.pub_name|escape]--></strong></h1>
+        <h5 class="pub_banner"><!--[$this_pub.pub_mote|escape]--></h5>
+        <p class="pub_banner">issue: <!--[$this_pub.pub_issue|escape]--> - <!--[$this_pub.pub_issue_tstamp|date_format:"%A, %B %e, %Y"|escape]--></p>
+    </a>      
+    </div>
     <!--[dmm_article_image_handler assign='article_image' article_id=$this_content.article_id ]--><!-- This should go... It should be in the controler, not in the template... it is not an output funtion but a content retrieving function -->
     <div class="panel">
         <h2><!--[$this_content.article_title|escape]--></h2><h5><!--[$this_content.article_subtitle|escape]--></h5>
@@ -16,6 +20,3 @@
       <!--[p_tag_this string=$this_content.article_body|escape article=$this_content.article_id|escape]-->
     </div>
 </div>
-             
-
-

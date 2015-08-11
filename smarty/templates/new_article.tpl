@@ -3,7 +3,12 @@
 <form action="" method="post">
     <div class="row">
         <div class="large-12 columns">
-            <h5>Article</h5>
+            <h4>Article: <strong><!--[$this_article.article_title|escape]--></strong></h4>
+            <!--[if $this_article.pub_issue]-->
+            <h6>Pub: <strong><!--[$this_article.pub_name|escape]--></strong></h6>
+            <h6>Issue: <strong><!--[$this_article.pub_issue|escape]--></strong></h6>
+            
+            <!--[/if]-->
         </div>
     </div>
     <div class="row">
@@ -41,7 +46,7 @@
             <input class="button small large-1" type="submit" value="Save" <!--[if $no_edit]-->disabled<!--[/if]--> />
             <input type="hidden" name="frm_submit" value=10 />
             <!--[if isset($smarty.get.artid)]--><input type="hidden"   name="frm_article_id" value=<!--[$smarty.get.artid]--> /><!--[/if]-->
-            <!--[if $this_article.article_pub_issue_id]--><input type="hidden" name="frm_article_pub_issue_id" value=<!--[$this_article.article_pub_issue_id]--> /><!--[/if]-->
+            <!--[if $this_article.article_pub_issue_id]--><input type="hidden" name="frm_pub_issue_id" value=<!--[$this_article.article_pub_issue_id]--> /><!--[/if]-->
             <input type="hidden" name="frm_xss" value=<!--[$smarty.session.form_xss]--> />
         </div>
     </div>

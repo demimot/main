@@ -4,7 +4,7 @@
         <!--[if $this_pub.pub_issue_logo]--><div class="pub_issue_logo" style="background:transparent url('/<!--[$default_img_path]--><!--[$this_pub.pub_issue_logo]-->');">&nbsp;</div><!--[/if]-->
         <h1 class="pub_banner"><strong><!--[$this_pub.pub_name|escape]--></strong></h1>
         <h5 class="pub_banner"><!--[$this_pub.pub_mote|escape]--></h5>
-        <p class="pub_banner">issue: <!--[$this_pub.pub_issue|escape]--></p>
+        <p class="pub_banner">issue: <!--[$this_pub.pub_issue|escape]--> - <!--[$this_pub.pub_issue_tstamp|date_format:"%A, %B %e, %Y"|escape]--></p>
     </a>      
     </div>
     <dl class="accordion" data-accordion id='accordion'>
@@ -34,6 +34,3 @@
         <!--[/foreach]-->
     </dl>
 </div>
-             
-
-

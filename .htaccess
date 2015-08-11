@@ -7,30 +7,22 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteBase /
 
-# next line allow dynamic css stlesheets to look like static css files so to be cached on client browsers # 
+# next line allow dynamic css stlesheets to look like static css files # 
 RewriteRule ^css/pub_css([^/]*)css$ /css/pub_css.php?piid=$1 [L]
+
 RewriteRule ^home$ index.php?ta=0 [L]
-# last line
-
-
 RewriteRule ^login$ /index.php?ta=900 [L]
 RewriteRule ^logout$ /index.php?ta=901&%{QUERY_STRING} [L]
-
 RewriteRule ^create_new_pub$ /index.php?ta=100&pubid=new [L]
 RewriteRule ^admin-pub-([0-9]+)$ /index.php?ta=101&pubid=$1&%{QUERY_STRING} [L]
-RewriteRule ^admin-issue-([0-9]+)$ /index.php?ta=150&piid=$1 [L]
-
-
-RewriteRule ^adm-article-([0-9]+)$  /index.php?ta=202&artid=$1 [L]
+RewriteRule ^admin-issue-([0-9]+)$ /index.php?ta=150&piid=$1&%{QUERY_STRING} [L]
+RewriteRule ^adm-article-([0-9]+)$  /index.php?ta=202&artid=$1&%{QUERY_STRING} [L]
 RewriteRule ^create-article$ /index.php?ta=200&artid=new [L]
-RewriteRule ^edit-article-([0-9]+)$  /index.php?ta=201&artid=$1 [L]
-
+RewriteRule ^edit-article-([0-9]+)$  /index.php?ta=201&artid=$1&%{QUERY_STRING} [L]
 RewriteRule ^check-source-([0-9]+)/article-([0-9]+)$ /index.php?ta=5&piid=$1&artid=$2 [L]
-
-RewriteRule ^read-([a-zA-Z0-9_-]+)$ /index.php?ta=1&slug=$1 [L]
-RewriteRule ^read-([a-zA-Z0-9_-]+)/issue-([a-zA-Z0-9_-]+)$ /index.php?ta=2&slug=$1&pid=$2 [L]
-RewriteRule ^read-([a-zA-Z0-9_-]+)/issue-([a-zA-Z0-9_-]+)/article-([a-zA-Z0-9_-]+)$  /index.php?ta=3&slug=$1&pid=$2&aslug=$3 [L]
-
+RewriteRule ^read-([a-zA-Z0-9_-]+)$ /index.php?ta=1&slug=$1&%{QUERY_STRING} [L]
+RewriteRule ^read-([a-zA-Z0-9_-]+)/issue-([a-zA-Z0-9_-]+)$ /index.php?ta=2&slug=$1&pid=$2&%{QUERY_STRING} [L]
+RewriteRule ^read-([a-zA-Z0-9_-]+)/issue-([a-zA-Z0-9_-]+)/article-([a-zA-Z0-9_-]+)$  /index.php?ta=3&slug=$1&pid=$2&aslug=$3&%{QUERY_STRING} [L]
 
 
 AuthType Basic
