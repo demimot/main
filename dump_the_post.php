@@ -3,7 +3,7 @@ echo "<pre>
 
 
 " ; 
-				var_dump($the_POST);
+				var_dump($_POST);
 echo "
 </pre>";
 ?>

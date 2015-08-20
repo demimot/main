@@ -11,7 +11,11 @@
 <!--[if isset($this_pub.pub_issue)]-->
     <link rel="stylesheet" href="/css/pub_css<!--[$smarty.session.pub_issue_id]-->.css" />
 <!--[/if]-->
+<!--[if $page_has_form]-->
+    <link rel="stylesheet" href="/css/validationEngine.jquery.css" />    
+<!--[/if]-->
     <script src="/js/modernizr.js"></script>
+    <script src="/js/dmm.js"></script>
 <!--[if $smarty.get.ta==101]-->
     <link rel="stylesheet" href="/css/dataTables.foundation.css" />
 <!--[/if]-->

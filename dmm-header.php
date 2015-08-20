@@ -92,6 +92,10 @@
                 if (isset($_GET['pubid']) and $_GET['pubid'] and isset($_SESSION['user_id'])){
 	                if($_GET['pubid']=="new"){
                          $currenttemplate = "my_pub.tpl";
+						 $smarty->assign('page_has_form', true);
+						 $this_forms=array("frm_publication_form");
+						 $smarty->assign('this_forms', $this_forms);
+
                     } 
                 }
                 break;
@@ -106,10 +110,21 @@
 						
 						$this_pub_unpublished_issues = get_issues_by_pub($_GET['pubid']);
 						$smarty->assign('unpublished_issues', $this_pub_unpublished_issues);
+
 						$this_pub_published_issues = get_issues_by_pub($_GET['pubid'], 1);
 						$smarty->assign('published_issues', $this_pub_published_issues);
 
+                        $this_pub_columns = get_columns_by_pub($_GET['pubid']);
+						$smarty->assign('this_pub_columns', $this_pub_columns);
+
+                        $this_pub_staff = get_staff_by_pub($_GET['pubid']);
+						$smarty->assign('contributors', $this_pub_staff);						
+						
+						
                         $currenttemplate = "my_pub.tpl";
+						 $smarty->assign('page_has_form', true);
+						 $this_forms=array("frm_publication_form", "frm_pub_published_issue_form", "frm_pub_unpublished_issue_form", "frm_pub_css_form", "frm_pub_sections_form", "frm_pub_logo_form", "frm_pub_columns_form", "frm_pub_staff_form");
+						 $smarty->assign('this_forms', $this_forms);
 		            }
 					else{
           	            page_not_found();					
@@ -121,6 +136,9 @@
                     if($this_issue = get_this_issue_data($_GET['piid'])){
 					    $smarty->assign('this_issue', $this_issue);
                         $currenttemplate = "my_issue.tpl";
+						$smarty->assign('page_has_form', true);
+						$this_forms=array("frm_publish_issue_form", "frm_issue_css_form", "frm_issue_sections_form", "frm_cover_file_form", "frm_logo_file_form");
+					    $smarty->assign('this_forms', $this_forms);
 					}
 					else{
        	                page_not_found();					
@@ -131,6 +149,9 @@
 			    if (isset($_GET['artid']) and $_GET['artid'] and isset($_SESSION['user_id'])){
 	        	    if($_GET['artid']=="new"){
 			            $currenttemplate = "new_article.tpl";
+						$smarty->assign('page_has_form', true);
+						$this_forms=array("frm_edit_article_form");
+					    $smarty->assign('this_forms', $this_forms);
                     } 
 				}
                 break;
@@ -140,6 +161,9 @@
 		                $smarty->assign('this_article', $this_article);
 		                $smarty->assign('no_edit', 0);
                         $currenttemplate = "new_article.tpl";
+						$smarty->assign('page_has_form', true);
+						$this_forms=array("frm_edit_article_form");
+					    $smarty->assign('this_forms', $this_forms);
 		            }
 					else{
           	            page_not_found();					
@@ -152,25 +176,53 @@
 		                $smarty->assign('this_article', $this_article);
 		                $smarty->assign('no_edit', 1);
                         $currenttemplate = "new_article.tpl";
+						$smarty->assign('page_has_form', true);
 		            }
 					else{
           	            page_not_found();					
 					}
 				}
                 break;
+			case 300:
+			    if (isset($_GET['usrid']) and $_GET['usrid'] and !isset($_SESSION['user_id'])){
+                    if($this_user = get_user_data($_GET['usrid'])){
+		                $smarty->assign('this_user', $this_user);
+    					$currenttemplate = "new_user.tpl";
+					}
+				}
+				break;
+			case 301:
+			    if (isset($_GET['usrid']) and $_GET['usrid'] and isset($_GET['ars']) and $_GET['ars'] and !isset($_SESSION['user_id'])){
+                    if($activate_user = activate_user($_GET['usrid'], $_GET['ars'])){
+                        if($this_user = get_user_data($_GET['usrid'])){
+		                    $smarty->assign('this_user', $this_user);
+    					    $currenttemplate = "new_user_valid.tpl";
+					    }
+					}
+				}			    
+			    break;
             case 404:
 			    header("HTTP/1.0 404 Not Found");
                 $currenttemplate = 'page404.tpl';
                 break;
             case 900:
                 $currenttemplate = 'login.tpl';
+				$smarty->assign('page_has_form', true);
                 break;
             case 901:
                 if(isset($_SESSION['user_id'])) {
 					unset($_SESSION['user_id']);
-					$location = $_GET['loc'];
+					$location = str_replace("/page-not-found", "", $_GET['loc']);
 		    		header("Location: " . $location);
                     exit();
+				}
+                break;
+            case 910:
+                if(!isset($_SESSION['user_id'])) {
+                    $currenttemplate = 'signup.tpl';
+					$smarty->assign('page_has_form', true);
+					$this_forms=array("user_registration");
+					$smarty->assign('this_forms', $this_forms);
 				}
                 break;
 			default:
@@ -210,7 +262,7 @@
 	
 	/* populate array with featured publications for home page
 	   This function will need some intel to decide what to bring to each user 	*/
-    if($currenttemplate == 'home.tpl')
+    if($currenttemplate == 'home.tpl' or $currenttemplate == 'new_user.tpl' or $currenttemplate == 'new_user_valid.tpl')
 	{
         $smarty->assign('current_featured', get_featured());
 	};
@@ -226,7 +278,7 @@
     $smarty->assign('called_uri', $_SERVER['REQUEST_URI']);
 	
 	/* test */
-	$smarty->assign('teste', "<p>" . toAscii("My Session ID : ","'") . session_id () . " - remove this on " . __FILE__ . "</strong> line <strong>" . __LINE__ . "</strong></p>");
+	$smarty->assign('teste', "<p>" . Slugfy("My Session ID : ","'") . session_id () . " - remove this on " . __FILE__ . "</strong> line <strong>" . __LINE__ . "</strong></p>");
 
 	/* Start bringing from CMS DB */
 	switch ($_SESSION['language']) {

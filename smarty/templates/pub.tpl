@@ -27,7 +27,8 @@
                 <!--[include file="article_img.tpl"]-->
               <!--[/if]-->
               <!--[if $article.article_source]--><p><a href="/check-source-<!--[$article.article_pub_issue_id|escape]-->/article-<!--[$article.article_id|escape]-->" target="_blank">source: <!--[$article.article_source|escape]--></a></p><!--[/if]-->
-              <!--[p_tag_this string=$article.article_body|escape article=$article.article_id|escape]--><!--[$teste]-->
+              <!--[p_tag_this string=$article.article_body|escape article=$article.article_id|escape]-->
+              <!--[if $user_publications]--><a href="#" class="button tiny">Demimotize</a><!--[/if]-->
             </div>
             </dd>
             <hr />

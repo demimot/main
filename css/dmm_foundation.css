@@ -1,5 +1,5 @@
 .row {
-  max-width: 100%; }
+  max-width: 100%;}
 
 .fixed.expanded:not(.dmm-top-bar) .dmm-top-bar-section {
   margin-top: 25px; }
@@ -112,7 +112,7 @@ nav.tab-bar {
     width: auto !important;
     }
 
-.dmm_p_margin{
-    margin-left:10px;
-    margin-right:10px;
+.dmm-tab-block{
+    padding-left:10px !important;
+    padding-right:10px !important;
 }

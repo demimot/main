@@ -12,7 +12,7 @@
 function smarty_function_p_tag_this($params, &$smarty) 
 {   
     if ($params['string']){
-		$string = preg_replace_callback('/\n(\s*\n)+/', 'parseTagsRecursive', $params['string']); /* to be used to inject picures and or ads in the body. */
+		$string = preg_replace_callback('#\R+#', 'parseTagsRecursive', $params['string']); /* to be used to inject picures and or ads in the body. */
         $string = preg_replace('/\n/', '', $string);
         $string = '<p>'.$string.'</p>';
         $result = $string;
@@ -28,7 +28,7 @@ function smarty_function_p_tag_this($params, &$smarty)
 function parseTagsRecursive($input)
 {
     global $count_p;
-    $regex = '/\n(\s*\n)+/';
+    $regex = '#\R+#';
 
     if (is_array($input)) {
         $input = '</hr ></p><!--[#placehold' . intval($count_p) . ']--><p>'.$input[1];

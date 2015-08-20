@@ -18,5 +18,6 @@
       <!--[/if]-->
       <!--[if $this_content.article_source]--><p><a href="/check-source-<!--[$this_content.article_pub_issue_id|escape]-->/article-<!--[$this_content.article_id|escape]-->" target="_blank">source: <!--[$this_content.article_source|escape]--></a></p><!--[/if]-->
       <!--[p_tag_this string=$this_content.article_body|escape article=$this_content.article_id|escape]-->
+      <!--[if $user_publications]--><a href="#" class="button tiny">Demimotize</a><!--[/if]-->
     </div>
 </div>

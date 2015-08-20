@@ -1,24 +1,21 @@
 <div class="large-8 medium-10 small-12 columns">
     <div class="callout panel" style="margin-top: 40px;">
-        <h1>Seja bem-vindo à DemiMot <!--[$dmm_user.user_nickname|escape]-->!!!</h1>
+        <h1>Seja bem-vindo à DemiMot <!--[$this_user.user_nickname|escape]-->!!!</h1>
         <p>A sua plataforma para criação de Jornais e revistas de qualidade</p>
     </div><hr />
     <div class="block-grid">
         <center><img class="center" src="/css/img/newsstand-clipart-newsstand_CoolClips_vc010005.jpg" width="375" height="316" alt="newsstand" longdesc="http://www.demimot.com"></center>
     </div><hr />
-    <div class="panel">
-      <!--[if isset($smarty.session.user_id)]-->
-        <h4>Tanto a dizer, e tão pouco tempo!</h4>
-        <p>Name: <!--[$dmm_user.user_firstname|escape]--> <!--[$dmm_user.user_lastname|escape]--> - Phone: <!--[$dmm_user.user_tel|escape]--> - E-mail: <!--[$dmm_user.user_email|escape]--></p>
-      <!--[else]-->
-        <h4>Tanto a ler, e tão pouco tempo!</h4>
-      <!--[/if]-->
+    <div class="panel callout">
+        <h3>Congratulations<!--[if $this_user.user_firstname|escape]--> <!--[$this_user.user_firstname|escape]--><!--[/if]-->!!!</h3>
+        <h4>Your account has been validated with success.</h4>
+        <p>You can login to your account at anytime now</p>
+        <p>Name: <!--[$this_user.user_firstname|escape]--> <!--[$this_user.user_lastname|escape]--> - Phone: <!--[$this_user.user_tel|escape]--> - E-mail: <!--[$this_user.user_email|escape]--></p>
     </div>
     <!-- Block of featured Publications with a search box on top 
-    The Logic for featured and the quantity of featured TBD  
-    It is supposed to be an smarty array of pub names, indexes and cover images for thumbnails
-    It is suposed not to have an defined issue and so, the most recent will be serverd
-    in each pub there should be a link for past issues browsing and selecting
+
+    Consider yet another template instead of a block... It could be used in may other pages
+
     -->
     <div class="large-12 columns" style="outline:auto;margin-bottom:15px !important;">
         <h3 class="text-center">Search<h3>

@@ -6,7 +6,7 @@
     <div class="block-grid">
         <center><img class="center" src="/css/img/newsstand-clipart-newsstand_CoolClips_vc010005.jpg" width="375" height="316" alt="newsstand" longdesc="http://www.demimot.com"></center>
     </div><hr />
-    <div class="panel"><!--[$onde]-->
+    <div class="panel">
         <h4>What do you want to do next?</h4>
         <p><a href="/home">Go to homepage?</a></p>
      </div>

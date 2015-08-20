@@ -10,7 +10,7 @@ $smarty->left_delimiter = '<!--[';
 $smarty->right_delimiter = ']-->';
 
 ##Setup cahing
-$smarty->caching = 1;
+$smarty->caching = 0;
 $smarty->compile_check = 1;
 $smarty->force_compile = 1; ## Coment after development
 $request_use_auto_globals = 1;
