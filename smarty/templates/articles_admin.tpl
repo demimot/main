@@ -1,3 +1,4 @@
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
 <h4 class="subheader">My Articles:</h4>
 <a href="/create-article" class="button">New Article</a>
 <!--[if $your_unpublished_articles]-->

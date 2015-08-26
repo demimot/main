@@ -1,4 +1,5 @@
 <div class="large-8 medium-10 small-12 columns" style="margin-top: 40px;"><!-- for allowing space below navigation bar -->
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
     <div class="row">
         <div class="panel<!--[if $smarty.get.pubid=='new']--> callout<!--[/if]-->">
             <div class="row">
@@ -34,7 +35,7 @@
         </dd>
         <dd class="accordion-navigation">
             <a href="#defaults"><h3>Default settings: <!--[$this_publication.pub_name|escape]-->...</h3></a>
-            <div id="defaults" class="content"> <!--[$smarty.template]-->
+            <div id="defaults" class="content"> 
                 <div class="panel callout">
                     <div class="row">
                         <div class="large-12 columns">

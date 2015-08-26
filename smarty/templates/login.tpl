@@ -1,4 +1,5 @@
 <div class="panel callout" style="margin-top: 40px;">
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
 <form action="/" method="post">
     <div class="row">
         <div class="large-12 columns">

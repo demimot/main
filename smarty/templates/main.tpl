@@ -1,10 +1,9 @@
 <div class="row">
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
     <div class="large-12 medium-12 small 12 columns">
         <div class="row">
 <!--Start Left Blocks-->
             <div class="large-2 medium-1 small-0 columns">
-                <div class="row">&nbsp;</div>
-                <div class="row">&nbsp;</div>
                 <!--[include file="pub_old_issues_block.tpl"]-->
                 <!--[if isset($smarty.session.user_id)]-->
                     <!--[include file="pubs_admin.tpl"]-->

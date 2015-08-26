@@ -1,4 +1,4 @@
-<div class="large-8 medium-10 small-12 columns">
+<div class="large-8 medium-10 small-12 columns"><!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
     <div class="callout panel" style="margin-top: 40px;">
         <h1>Seja bem-vindo à DemiMot <!--[$dmm_user.user_nickname|escape]-->!!!</h1>
         <p>A sua plataforma para criação de Jornais e revistas de qualidade</p>

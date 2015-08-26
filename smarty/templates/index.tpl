@@ -1,3 +1,4 @@
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
 <!--[include file="header.tpl"]-->
 <!--[include file="navigation.tpl"]-->
 <!--[include file="main.tpl"]-->

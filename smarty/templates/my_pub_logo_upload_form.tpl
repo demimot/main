@@ -1,3 +1,4 @@
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
                                 <form id="frm_pub_logo_form" name="frm_pub_logo_form" action="" method="post" enctype="multipart/form-data">
                                     <div class="row">
                                         <label for="frm_image_upload" class="left">Logo: <!--[$this_publication.pub_logo|escape]--></label>

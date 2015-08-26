@@ -1,4 +1,4 @@
-get_articles_by_issue
+
 
 SELECT a.article_id, 
 a.article_title, 

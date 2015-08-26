@@ -1,3 +1,4 @@
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
                                 <form id="frm_pub_columns_form" name="frm_pub_columns_form" action="" method="post">
                                     <div class="row">
                                         <div class="large-12 columns">
@@ -10,7 +11,7 @@
                                                                                  $('#btn_column').prop('value', 'Delete column');" style="min-height:100px;" <!--[if not $this_pub_columns]-->disabled<!--[/if]--> >
                                                 <!--[if not $this_pub_columns]--><option>Use below text area to create Columns</option><!--[/if]-->
                                                 <!--[foreach name=externo item=pub_column from=$this_pub_columns]-->
-                                                <option data-column-id="<!--[$pub_column.column_id]-->" data-column-section-id="<!--[$pub_column.section_id]-->" data-column-user-id="<!--[$pub_column.user_id]-->" value="<!--[$pub_column.column_id]-->"><!--[$pub_column.column_name]--></option>
+                                                <option data-column-id="<!--[$pub_column.column_id|escape]-->" data-column-section-id="<!--[$pub_column.section_id|escape]-->" data-column-user-id="<!--[$pub_column.user_id|escape]-->" value="<!--[$pub_column.column_id]-->"><!--[$pub_column.column_name|escape]--></option>
                                                 <!--[/foreach]-->
                                             </select>
                                         </div>
@@ -27,7 +28,7 @@
                                                 <select class="validate[required]" name="frm_column_section" id="frm_column_section" <!--[if not $this_pub_sections]-->disabled<!--[/if]--> >
                                                 <option value="">-- Select a section --</option>
                                                 <!--[foreach name=externo item=pub_section from=$this_pub_sections]-->
-                                                    <option value="<!--[$pub_section.section_id]-->"><!--[$pub_section.section_name]--></option>
+                                                    <option value="<!--[$pub_section.section_id|escape]-->"><!--[$pub_section.section_name|escape]--></option>
                                                 <!--[/foreach]-->
                                             </select>
                                         </div>
@@ -39,7 +40,7 @@
                                                 <select class=class="validate[required]" id="column_staff_select" name="column_staff_select" >
                                                 <!--[if not $contributors]-->    <option value="">No contributers so far</option><!--[else]-->    <option value="">-- Select an author --</option><!--[/if]-->
                                                 <!--[foreach name=externo item=pub_contr from=$contributors]-->
-                                                    <option value="<!--[$pub_contr.user_id]-->"><!--[$pub_contr.user_nickname]--></option>
+                                                    <option value="<!--[$pub_contr.user_id|escape]-->"><!--[$pub_contr.user_nickname|escape]--></option>
                                                 <!--[/foreach]-->
                                             </select>
                                         </div>

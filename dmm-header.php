@@ -30,6 +30,8 @@
 	
 	$smarty->assign('title', "DemiMot");
 	
+	if(isset($_GET['debug'])) $smarty->assign('debug', true);
+	
 	// default template...
 	$currenttemplate = 'home.tpl';
     if(isset($_GET['ta']) and $_GET['ta']){
@@ -137,7 +139,7 @@
 					    $smarty->assign('this_issue', $this_issue);
                         $currenttemplate = "my_issue.tpl";
 						$smarty->assign('page_has_form', true);
-						$this_forms=array("frm_publish_issue_form", "frm_issue_css_form", "frm_issue_sections_form", "frm_cover_file_form", "frm_logo_file_form");
+						$this_forms=array("frm_publish_issue_form", "frm_issue_css_form", "frm_issue_sections_form", "frm_cover_file_form", "frm_logo_file_form", "frm_pub_issue_section_articles_form");
 					    $smarty->assign('this_forms', $this_forms);
 					}
 					else{
@@ -148,7 +150,7 @@
 			case 200:
 			    if (isset($_GET['artid']) and $_GET['artid'] and isset($_SESSION['user_id'])){
 	        	    if($_GET['artid']=="new"){
-			            $currenttemplate = "new_article.tpl";
+			            $currenttemplate = "my_article.tpl";
 						$smarty->assign('page_has_form', true);
 						$this_forms=array("frm_edit_article_form");
 					    $smarty->assign('this_forms', $this_forms);
@@ -159,10 +161,11 @@
 			    if (isset($_GET['artid']) and $_GET['artid'] and isset($_SESSION['user_id'])){
 					if($this_article = get_article_by_id($_GET['artid'])) {
 		                $smarty->assign('this_article', $this_article);
-		                $smarty->assign('no_edit', 0);
-                        $currenttemplate = "new_article.tpl";
+						if($this_article['pub_issue_published']) $noedit=1;
+                        $smarty->assign('no_edit', $noedit);
+                        $currenttemplate = "my_article.tpl";
 						$smarty->assign('page_has_form', true);
-						$this_forms=array("frm_edit_article_form");
+						$this_forms=array("frm_edit_article_form", "frm_article_image_form");
 					    $smarty->assign('this_forms', $this_forms);
 		            }
 					else{
@@ -175,8 +178,9 @@
 					if($this_article = get_article_by_id($_GET['artid'])) {
 		                $smarty->assign('this_article', $this_article);
 		                $smarty->assign('no_edit', 1);
-                        $currenttemplate = "new_article.tpl";
-						$smarty->assign('page_has_form', true);
+                        $currenttemplate = "my_article.tpl";
+						//$this_forms=array("frm_edit_article_form"); // does not need.... read only
+						//$smarty->assign('page_has_form', true);
 		            }
 					else{
           	            page_not_found();					
@@ -279,6 +283,9 @@
 	
 	/* test */
 	$smarty->assign('teste', "<p>" . Slugfy("My Session ID : ","'") . session_id () . " - remove this on " . __FILE__ . "</strong> line <strong>" . __LINE__ . "</strong></p>");
+
+    $smarty->assign('date_format', DMM_DATE_FORMAT);
+	$smarty->assign('smarty_date_format', SMARTY_DATE_FORMAT);
 
 	/* Start bringing from CMS DB */
 	switch ($_SESSION['language']) {

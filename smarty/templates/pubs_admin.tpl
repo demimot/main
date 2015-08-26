@@ -1,4 +1,4 @@
-<h4 class="subheader">My Publications:</h4>
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]--><h4 class="subheader"  style="margin-top: 40px;">My Publications:</h4>
 <a href="create_new_pub" class="button">New Publication</a>
 <!--[if $user_publications]-->
 <div class="panel callout">

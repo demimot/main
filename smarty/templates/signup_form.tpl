@@ -1,4 +1,4 @@
-<form action="" name="user_registration" id="user_registration" method="post">
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]--><form action="" name="user_registration" id="user_registration" method="post">
     <div class="row">
         <div class="large-12 columns">
             <h4>Demimot User Registration</h4>

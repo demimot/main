@@ -1,3 +1,4 @@
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
                             <div class="container" class="left">             
                                 <table id="stafftable" class="display" width="100%">
                                     <thead>

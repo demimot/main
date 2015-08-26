@@ -1,4 +1,5 @@
 <div class="large-8 medium-10 small-12 columns" style="margin-top: 40px; /* for allowing space below navigation bar */">
+    <!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
     <div class="pub_banner">
     <a href="/read-<!--[$this_pub.pub_slug|escape]-->/issue-<!--[$this_pub.pub_issue|escape]-->">
         <!--[if $this_pub.pub_issue_logo]--><div class="pub_issue_logo" style="background:transparent url('/<!--[$default_img_path]--><!--[$this_pub.pub_issue_logo]-->');">&nbsp;</div><!--[/if]-->

@@ -1,3 +1,4 @@
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
                                 <form id="frm_pub_sections_form" name="frm_pub_sections_form" action="" method="post">
                                     <div class="row">
                                         <div class="large-12 columns">
@@ -9,7 +10,7 @@
                                                                                  $('#btn_section').prop('value', 'Delete Section');" style="min-height:266px;" <!--[if not $this_pub_sections]-->disabled<!--[/if]--> >
                                                 <!--[if not $this_pub_sections]--><option>Use below text area to create sections</option><!--[/if]-->
                                                 <!--[foreach name=externo item=pub_section from=$this_pub_sections]-->
-                                                <option data-order="<!--[$pub_section.section_order]-->" value="<!--[$pub_section.section_id]-->"><!--[$pub_section.section_name]--></option>
+                                                <option data-order="<!--[$pub_section.section_order|escape]-->" value="<!--[$pub_section.section_id|escape]-->"><!--[$pub_section.section_name|escape]--></option>
                                                 <!--[/foreach]-->
                                             </select>
                                         </div>

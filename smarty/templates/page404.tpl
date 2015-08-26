@@ -1,5 +1,5 @@
 <div class="large-8 medium-10 small-12 columns">
-    <div class="callout panel" style="margin-top: 40px;">
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->    <div class="callout panel" style="margin-top: 40px;">
         <h3>Sorry <!--[$dmm_user.user_nickname|escape]--> but the page you requested cannot be found on Demimot!!!</h3>
         <p>The server said: 404 page not found</p>
     </div><hr />

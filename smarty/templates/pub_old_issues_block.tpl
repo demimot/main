@@ -1,9 +1,7 @@
 <!--[if isset($old_issues)]-->
-  <div class="row">&nbsp;</div>
-  <div class="row">&nbsp;</div>
   <!--[if $old_issues[0].pub_issue]-->
-    <div class="panel callout">
-      <h5><!--[$this_pub.pub_name|escape]--></h5>
+    <div class="panel callout" style="margin-top: 40px;">
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->      <h5><!--[$this_pub.pub_name|escape]--></h5>
       <p><!--[if $old_issues[0].pub_issue<$this_pub.pub_issue]-->previous issues:<!--[else]-->other issues<!--[/if]--></p>
       <ul>
       <!--[foreach name=outer item=pastissue from=$old_issues]-->

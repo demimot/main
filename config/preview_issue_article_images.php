@@ -13,13 +13,13 @@
     /* Array of database columns which should be read and sent back to DataTables. Use a space where
      * you want to insert a non-database field (for example a counter or static image)
      */
-    $aColumns = array( 'article_id', 'article_title', 'article_subtitle', 'article_body', 'article_slug', 'article_ready' );
+    $aColumns = array('article_id', 'article_image_weight', 'article_image_filename', 'article_image_caption', 'article_image_credits');
      
     /* Indexed column (used for fast and accurate table cardinality) */
-    $sIndexColumn = "article_id";
+    $sIndexColumn = "article_image_id";
      
     /* DB table to use */
-    $sTable = "dmm_articles";
+    $sTable = "dmm_article_images";
      
     /* Database connection information */
     $gaSql['user']       = $username_dmm_db_connection;
@@ -86,43 +86,19 @@
     /*
      * Output
      */
-     
+    $flag=0; 
     while ( $aRow = mysql_fetch_array( $rResult ) )
     {
-		$row  = ($aRow['article_ready']) ? "<h6>Ready for publishing</h6>"  : "<h6>NOT Ready</h6>";
-        $row .= "<h2>" . $aRow['article_title'] . "</h2>";
-        $row .= "<h3>" . $aRow['article_subtitle'] . "</h3>";
-        $row .= p_tag_this($aRow['article_body']);		 
-        $output = $row;
-    }
+        $row .= '<li><a href="img/' . $aRow['article_image_filename'] . '"><img data-caption="' . $aRow['article_image_caption'] . '" src="img/' . $aRow['article_image_filename'] . '"  naked=true height="100" link=false /></a></li>';
+        $flag=true;
+	}
 	
-     
+	if($flag){
+	    $row  = '<hr/>
+		<div class="clearing-assembled"><div><a href="#" class="clearing-close">×</a><div class="visible-img" style="display: none"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" alt=""><p class="clearing-caption"></p><a href="#" class="clearing-main-prev"><span></span></a><a href="#" class="clearing-main-next"><span></span></a></div><div class="carousel"><ul class="clearing-thumbs small-block-grid-5" data-clearing="">' . $row . '</ul></div></div></div>';
+	}
+    $output = $row;
+	
     echo $output;
-	
-	/*****************************************************************************
- ************                  Modifier Functions                 ************ 
- *****************************************************************************/
-
-function p_tag_this($input) 
-{   
-    if ($input){
-		$string = preg_replace_callback('#\R+#', 'p_TagsRecursive', $input); 
-       // $string = preg_replace('/\n/', '', $string);
-        $string = '<p>'.$string.'</p>';
-        $result = $string;
-    } else {$result = null;}
-	
-    return $result;
-}
-
-function p_TagsRecursive($input)
-{
-    $regex = '#\R+#';
-
-    if (is_array($input)) {
-        $input = '</p><p>'.$input[1];
-    }
-    return preg_replace_callback($regex, 'p_TagsRecursive', $input);
-}
 
 ?>

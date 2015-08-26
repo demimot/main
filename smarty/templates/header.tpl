@@ -12,10 +12,12 @@
     <link rel="stylesheet" href="/css/pub_css<!--[$smarty.session.pub_issue_id]-->.css" />
 <!--[/if]-->
 <!--[if $page_has_form]-->
-    <link rel="stylesheet" href="/css/validationEngine.jquery.css" />    
+    <link rel="stylesheet" href="/css/validationEngine.jquery.css" /> 
+    <link rel="stylesheet" href="/css/foundation-datepicker.css" />    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
 <!--[/if]-->
     <script src="/js/modernizr.js"></script>
-    <script src="/js/dmm.js"></script>
 <!--[if $smarty.get.ta==101]-->
     <link rel="stylesheet" href="/css/dataTables.foundation.css" />
 <!--[/if]-->

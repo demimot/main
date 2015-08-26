@@ -1,3 +1,4 @@
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
             <form id="frm_publication_form" name="frm_publication_form" action="" method="post">
                 <div class="row">
                     <div class="large-12 columns">

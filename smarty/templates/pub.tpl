@@ -1,5 +1,5 @@
 <div class="large-8 medium-10 small-12 columns" style="margin-top: 40px; /* for allowing space below navigation bar */">
-    <div class="pub_banner">
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->    <div class="pub_banner">
     <a href="/read-<!--[$this_pub.pub_slug|escape]-->/issue-<!--[$this_pub.pub_issue|escape]-->">
         <!--[if $this_pub.pub_issue_logo]--><div class="pub_issue_logo" style="background:transparent url('/<!--[$default_img_path]--><!--[$this_pub.pub_issue_logo]-->');">&nbsp;</div><!--[/if]-->
         <h1 class="pub_banner"><strong><!--[$this_pub.pub_name|escape]--></strong></h1>
@@ -10,11 +10,11 @@
     <dl class="accordion" data-accordion id='accordion'>
         <!--[foreach name=externo item=article from=$this_content]-->
             <dd class="accordion-navigation">
-            <!--[dmm_article_image_handler assign='article_image' article_id=$article.article_id ]-->
          <!-- This should go... 
                  It should be in the controler, not in the template... 
                  it is not an output funtion but a content retrieving function 
-         --><!--[dmm_article_image_handler assign='article_image' article_id=$article.article_id ]-->
+         -->
+            <!--[dmm_article_image_handler assign='article_image' article_id=$article.article_id]-->
             <a href="#panel<!--[$article.article_id|escape]-->b">
               <!--[if $article_image[0].article_image_filename]-->
                 <div class="pub_article_thumb" style="background-image:url('<!--[demimot_html_createthumb file="`$default_img_path``$article_image[0].article_image_filename`" naked=true height="100" link=false]-->')"></div>

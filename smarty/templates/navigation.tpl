@@ -3,7 +3,7 @@
         <div class="large-12 columns">
             <nav class="top-bar dmm-top-bar" data-topbar>
                 <ul class="title-area">
-                    <li class="name"><h1><a href="/"><!--[$name]--></a></h1></li>
+                    <li class="name"><h1><a href="/"><!--[$name]--><!--[if $debug]-->-<!--[$smarty.template]--><!--[/if]--></a></h1></li>
                     <li class="toggle-topbar menu-icon"><a href="/">Menu</a></li>
                 </ul>
                 <section class="top-bar-section dmm-top-bar-section">

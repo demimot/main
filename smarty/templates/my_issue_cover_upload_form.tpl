@@ -1,8 +1,11 @@
+<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
                         <form id="frm_cover_file_form" name="frm_cover_file_form" action="" method="post" enctype="multipart/form-data">
                             <div class="row">
+                                <div class="large-12 columns">
                                 <label for="frm_image_upload" class="left">Issue Cover: <!--[$this_issue.pub_issue_cover|escape]--></label>
                                 <!--[if $smarty.get.msgcover]--><label for="frm_image_upload" class="left"><span style="color:red !important;">&nbsp;<!--[$smarty.get.msgcover|escape]--></span></label><!--[/if]-->
                                 <input class="file validate[required]" name="frm_image_upload" id="frm_image_upload" placeholder="Cover filename" type=file>
+                                </div>
                             </div>
                             <!--[if $this_issue.pub_issue_cover]-->
                                 <div class="row">
