@@ -1,4 +1,4 @@
-<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
+<!--[if $debug]--><span style="color:red;"><!--[$smarty.template]--></span><!--[/if]-->
                             <div class="large-4 columns">
                                  <label for="frm_no_section_articles" class="left">Issue articles:</label>
                                  <select name="frm_no_section_articles" id="frm_no_section_articles" multiple  style="min-height:200px;" onchange="get_article_preview(this.value,'');get_article_images_preview(this.value,'');" >

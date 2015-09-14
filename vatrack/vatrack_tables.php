@@ -54,6 +54,7 @@ if ($DBconnection->connect_errno)
 $SQL_query = 'CREATE TABLE IF NOT EXISTS '. VATrack_DB_Name (). '.activity_log_' . date('Y_m_d', strtotime('+1 day')) . ' (
         tstamp timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT "User activity timestamp",
         IP varchar(15) NOT NULL COMMENT "User IP Address",
+        session varchar(40) NOT NULL COMMENT "for improving counting accuracy",
 		http_response smallint UNSIGNED NOT NULL DEFAULT 0 COMMENT "HTTP Response Code",
 		user_agent varchar(255) NOT NULL COMMENT "User browser",
         user_id int(10) NOT NULL default 0 COMMENT "Foreign Key to dmm_users",

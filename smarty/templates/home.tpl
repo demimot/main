@@ -1,17 +1,15 @@
-<div class="large-8 medium-10 small-12 columns"><!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
-    <div class="callout panel" style="margin-top: 40px;">
-        <h1>Seja bem-vindo à DemiMot <!--[$dmm_user.user_nickname|escape]-->!!!</h1>
-        <p>A sua plataforma para criação de Jornais e revistas de qualidade</p>
-    </div><hr />
-    <div class="block-grid">
-        <center><img class="center" src="/css/img/newsstand-clipart-newsstand_CoolClips_vc010005.jpg" width="375" height="316" alt="newsstand" longdesc="http://www.demimot.com"></center>
-    </div><hr />
+<div class="large-8 medium-10 small-12 columns"><!--[if $debug]--><span style="color:red;"><!--[$smarty.template]--></span><!--[/if]--><!--[dmm_template_static_content template_name=$smarty.template language=$smarty.session.language assign='static_content']-->
+    <div class="callout panel" style="margin-top: 20px;">
+        <h1><!--[$static_content.welcome|escape]--> <!--[$dmm_user.user_nickname|escape]-->!!!</h1>
+        <p><!--[$static_content.mote|escape]--></p>
+    </div>
+    <!--[include file='newsstand_banner.tpl']-->
     <div class="panel">
       <!--[if isset($smarty.session.user_id)]-->
-        <h4>Tanto a dizer, e tão pouco tempo!</h4>
-        <p>Name: <!--[$dmm_user.user_firstname|escape]--> <!--[$dmm_user.user_lastname|escape]--> - Phone: <!--[$dmm_user.user_tel|escape]--> - E-mail: <!--[$dmm_user.user_email|escape]--></p>
+        <h4><!--[$static_content.session_discl1|escape]--></h4>
+        <p><!--[$static_content.session_discl2|escape]--> <!--[$dmm_user.user_firstname|escape]--> <!--[$dmm_user.user_lastname|escape]--> - <!--[$static_content.session_discl3|escape]--> <!--[$dmm_user.user_tel|escape]--> - <!--[$static_content.session_discl4|escape]--> <!--[$dmm_user.user_email|escape]--></p>
       <!--[else]-->
-        <h4>Tanto a ler, e tão pouco tempo!</h4>
+        <h4><!--[$static_content.no_session_discl1|escape]--></h4>
       <!--[/if]-->
     </div>
     <!-- Block of featured Publications with a search box on top 
@@ -20,15 +18,5 @@
     It is suposed not to have an defined issue and so, the most recent will be serverd
     in each pub there should be a link for past issues browsing and selecting
     -->
-    <div class="large-12 columns" style="outline:auto;margin-bottom:15px !important;">
-        <h3 class="text-center">Search<h3>
-      <!--[foreach name=outer item=featured from=$current_featured]-->      
-        <div class="small-12 medium-4 large-3 columns left"><a href="/read-<!--[$featured.pub_slug|escape]-->">
-            <!--[assign var="thiscover" value="`$default_img_path``$featured.pub_issue_cover`"]-->
-            <div class="panel dmm-featured-pub" style="background-image:url('<!--[demimot_html_createthumb file=$thiscover naked=true height="200" link=false]-->')">
-                <center><h4 style="color:red; font-weight:700"><!--[$featured.pub_name|escape]--></h2></center>
-            </div></a>
-        </div>
-      <!--[/foreach]-->
-    </div>
+    <!--[include file='featured_pubs.tpl']-->
 </div>

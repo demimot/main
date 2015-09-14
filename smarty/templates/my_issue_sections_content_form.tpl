@@ -1,7 +1,7 @@
-<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
+<!--[if $debug]--><span style="color:red;"><!--[$smarty.template]--></span><!--[/if]-->
                                 <div class="large-4 columns">
                                         <label for="frm_articles<!--[$issue_section.section_id]-->" class="left">Section <!--[$issue_section.section_name|escape]--> articles:</label>
-                                        <select name="frm_articles<!--[$issue_section.section_id]-->" id="frm_articles<!--[$issue_section.section_id]-->" multiple  style="min-height:200px;" onchange="get_article_preview(this.value, <!--[$issue_section.section_id]-->); get_article_images_preview(this.value, <!--[$issue_section.section_id]-->);" >
+                                        <select name="frm_articles<!--[$issue_section.section_id]-->" id="frm_articles<!--[$issue_section.section_id]-->" multiple  style="min-height:200px;" onchange="get_article_preview(this.value, <!--[$issue_section.section_id]-->); get_article_images_preview(this.value, <!--[$issue_section.section_id]-->, <!--[$this_issue.pub_issue_id]-->);" >
                                         <!--[assign var="flag" value="0"]-->
                                         <!--[foreach name=externo item=section_article from=$this_issue.issue_articles]-->
                                             <!--[if $section_article.section_id eq $issue_section.section_id]-->

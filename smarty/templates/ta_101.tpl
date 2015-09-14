@@ -1,4 +1,4 @@
-    $('#stafftable').dataTable( { "ajax": 'config/non-staff-users-data-tables.php?pub-id=<!--[$smarty.get.pubid]-->', 
+   $('#stafftable').dataTable( { "ajax": 'config/non-staff-users-data-tables.php?pub-id=<!--[$smarty.get.pubid]-->', 
         "rowId": 'DT_RowId',
 		"stateSave": true, 
 		"sessionStorage": true,
@@ -30,16 +30,3 @@
         $("#frm_pub_staff_form #pub_staff_select").val([]);
     } ); 
     
-    $('#pub_staff_select').change( function () {
-        if($("#pub_staff_select").val()!=""){
-            $("#frm_pub_staff_name").val($("#pub_staff_select option:selected").text());
-            $("#frm_pub_staff_user_id").val($("#pub_staff_select").val());
-            $("#btn_staff").val('Delete contributor');
-            $("#frm_pub_staff_verb").val('delete');
-        } else {
-            $("#frm_pub_staff_name").val('');
-            $("#frm_pub_staff_user_id").val('');
-            $("#frm_pub_staff_form #pub_staff_select").val([]);
-            $("#frm_pub_staff_form #frm_pub_staff_verb").val('add');
-        }
-    } ); 

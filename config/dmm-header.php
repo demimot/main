@@ -28,9 +28,22 @@
 		$_SESSION['form_xss'] = set_form_xss();
 	}
 	
-	$smarty->assign('title', "DemiMot");
+	$smarty->assign('title', strip_tags(DMM_TITLE));
 	
 	if(isset($_GET['debug'])) $smarty->assign('debug', true);
+	
+	$not_demimot = strpos($_SERVER['HTTP_HOST'],"demimot.com")===false;
+	$smarty->assign('not_demimot', $not_demimot);
+	if($not_demimot and  $_SERVER['REQUEST_URI']=="/"){
+		$slug_start = strpos($_SERVER['HTTP_HOST'],"www.");
+		$slug_start = ($slug_start===false) ? 0 : 4;
+		$slug_end = strpos($_SERVER['HTTP_HOST'],".",$slug_start) - $slug_start;
+		$this_slug = substr($_SERVER['HTTP_HOST'],$slug_start, $slug_end);
+		$_GET['ta'] = 1;
+		$_GET['slug'] = $this_slug;
+		$_GET['pid'] = NULL;
+//		$smarty->assign('name', ucwords($this_slug) . " @ " . DMM_TITLE);
+	}
 	
 	// default template...
 	$currenttemplate = 'home.tpl';
@@ -41,12 +54,13 @@
 			case 3:
 			    if($thispub = get_pub_by_slug($_GET['slug'], $_GET['pid'])){ 
 			        $smarty->assign('this_pub', $thispub);
-			        $smarty->assign('title', $thispub['pub_name'] . "@DemiMot");
+			        $smarty->assign('title', $thispub['pub_name'] . " @ " .  strip_tags(DMM_TITLE));
                     $_SESSION['pub_issue_id']=$thispub['pub_issue_id']; 
         			/* Get Past issues*/
 
 		        	$old_issues = get_old_issues($thispub['pub_id'], $thispub['pub_issue']);
 			        $smarty->assign('old_issues', $old_issues);
+            		if($not_demimot) $smarty->assign('name', ucwords($_GET['slug']) . " @ " . DMM_TITLE);
 					
    				}else{
       	            page_not_found();
@@ -71,7 +85,7 @@
 			    if(isset($_GET['piid']) and $_GET['piid']){ 
 					if($thispub = pub_handler($_GET['piid'])) {
 		                $smarty->assign('this_pub', $thispub);
-						$smarty->assign('title', $thispub['pub_name'] . "@DemiMot");
+						$smarty->assign('title', $thispub['pub_name'] . " @ " . strip_tags(DMM_TITLE));
                         $_SESSION['pub_issue_id'] = $thispub['pub_issue_id']; 
                         /* Get Past issues*/
     		        	$old_issues = get_old_issues($thispub['pub_id'], $thispub['pub_issue']);
@@ -90,6 +104,45 @@
       	            page_not_found();
 				}
 			    break;
+			case 6:
+			case 7:
+			    if(isset($_SESSION['user_id']) and $_SESSION['user_id']){
+			        if($thispub = get_pub_by_slug($_GET['slug'], $_GET['pid'], 1)){ 
+					    if($thispub['user_id']==$_SESSION['user_id']){
+			                $smarty->assign('this_pub', $thispub);
+			                $smarty->assign('title', $thispub['pub_name'] . " @ " . strip_tags(DMM_TITLE));
+                            $_SESSION['pub_issue_id']=$thispub['pub_issue_id']; 
+			                $smarty->assign('ispreview', true);
+       		    
+    			            if(isset($_GET['aslug']) and $_GET['aslug']) {
+        		    	        if($this_content = get_article_by_pub_issue_slug($thispub['pub_issue_id'], $_GET['aslug'])){	
+	            		            $smarty->assign('this_content', $this_content);
+    	        	    		    $currenttemplate = 'article.tpl';
+        		    	    	}else{
+              	                    page_not_found();
+			    	            }
+    			            }
+	    			        else
+		    		        { 
+        		    			$this_content = get_articles_by_issue($thispub['pub_issue_id']);
+	        		            $smarty->assign('this_content', $this_content);
+		        		        $currenttemplate = 'pub.tpl';	
+    			    	    }
+					    }else{
+          	                page_not_found();
+		    	        }
+	                }else{
+          	            page_not_found();
+		    	    }
+				}
+				break;
+
+			case 10:
+                $currenttemplate = "terms.tpl";
+			    break;
+			case 11:
+                $currenttemplate = "privacy_police.tpl";
+			    break;
             case 100:
                 if (isset($_GET['pubid']) and $_GET['pubid'] and isset($_SESSION['user_id'])){
 	                if($_GET['pubid']=="new"){
@@ -97,33 +150,21 @@
 						 $smarty->assign('page_has_form', true);
 						 $this_forms=array("frm_publication_form");
 						 $smarty->assign('this_forms', $this_forms);
-
+                         $pub_options['pub_types'] = get_pub_types( $_SESSION['language'] );
+						 $pub_options['pub_income_status'] = get_pub_income_status( $_SESSION['language'] );
+						 $smarty->assign('publication_options', $pub_options);
                     } 
                 }
                 break;
 			case 101:
 			    if (isset($_GET['pubid']) and $_GET['pubid'] and isset($_SESSION['user_id'])){
 					if($this_pub = get_pub_by_pub_id($_GET['pubid'])) {
-		                $smarty->assign('this_publication', $this_pub);
-						$smarty->assign('no_edit', 0);
-						
-						$this_pub_sections = get_sections_from_template_by_pub($_GET['pubid']);
-						$smarty->assign('this_pub_sections', $this_pub_sections);
-						
-						$this_pub_unpublished_issues = get_issues_by_pub($_GET['pubid']);
-						$smarty->assign('unpublished_issues', $this_pub_unpublished_issues);
-
-						$this_pub_published_issues = get_issues_by_pub($_GET['pubid'], 1);
-						$smarty->assign('published_issues', $this_pub_published_issues);
-
-                        $this_pub_columns = get_columns_by_pub($_GET['pubid']);
-						$smarty->assign('this_pub_columns', $this_pub_columns);
-
-                        $this_pub_staff = get_staff_by_pub($_GET['pubid']);
-						$smarty->assign('contributors', $this_pub_staff);						
-						
-						
-                        $currenttemplate = "my_pub.tpl";
+		                 $smarty->assign('this_publication', $this_pub);
+		   				 $smarty->assign('no_edit', 0);
+                         $pub_options['pub_types'] = get_pub_types( $_SESSION['language'] );
+        				 $pub_options['pub_income_status'] = get_pub_income_status( $_SESSION['language'] );
+						 $smarty->assign('publication_options', $pub_options);
+                         $currenttemplate = "my_pub.tpl";
 						 $smarty->assign('page_has_form', true);
 						 $this_forms=array("frm_publication_form", "frm_pub_published_issue_form", "frm_pub_unpublished_issue_form", "frm_pub_css_form", "frm_pub_sections_form", "frm_pub_logo_form", "frm_pub_columns_form", "frm_pub_staff_form");
 						 $smarty->assign('this_forms', $this_forms);
@@ -139,7 +180,7 @@
 					    $smarty->assign('this_issue', $this_issue);
                         $currenttemplate = "my_issue.tpl";
 						$smarty->assign('page_has_form', true);
-						$this_forms=array("frm_publish_issue_form", "frm_issue_css_form", "frm_issue_sections_form", "frm_cover_file_form", "frm_logo_file_form", "frm_pub_issue_section_articles_form");
+						$this_forms=array("frm_publish_issue_form", "frm_issue_css_form", "frm_issue_sections_form", "frm_cover_file_form", "frm_logo_file_form", "frm_pub_issue_section_articles_form", "frm_issue_article_image_form");
 					    $smarty->assign('this_forms', $this_forms);
 					}
 					else{
@@ -154,19 +195,29 @@
 						$smarty->assign('page_has_form', true);
 						$this_forms=array("frm_edit_article_form");
 					    $smarty->assign('this_forms', $this_forms);
+						$staff_of = get_pubs_of_contibuter($_SESSION['user_id']);
+					    $smarty->assign('staff_of', $staff_of);		
                     } 
 				}
                 break;
 			case 201:
 			    if (isset($_GET['artid']) and $_GET['artid'] and isset($_SESSION['user_id'])){
 					if($this_article = get_article_by_id($_GET['artid'])) {
+						if($this_images = get_article_images($_GET['artid'])){
+							$this_article['article_images'] = $this_images;
+						}
 		                $smarty->assign('this_article', $this_article);
 						if($this_article['pub_issue_published']) $noedit=1;
                         $smarty->assign('no_edit', $noedit);
-                        $currenttemplate = "my_article.tpl";
+						if($this_article['article_spontaneous'] or !$this_article['article_issue_id']){
+    						$staff_of = get_pubs_of_contibuter($_SESSION['user_id']);
+	    				    $smarty->assign('staff_of', $staff_of);		
+						}
+						$currenttemplate = "my_article.tpl";
 						$smarty->assign('page_has_form', true);
 						$this_forms=array("frm_edit_article_form", "frm_article_image_form");
 					    $smarty->assign('this_forms', $this_forms);
+						
 		            }
 					else{
           	            page_not_found();					
@@ -176,6 +227,9 @@
 			case 202:
 			    if (isset($_GET['artid']) and $_GET['artid'] and isset($_SESSION['user_id'])){
 					if($this_article = get_article_by_id($_GET['artid'])) {
+						if($this_images = get_article_images($_GET['artid'])){
+							$this_article['article_images'] = $this_images;
+						}
 		                $smarty->assign('this_article', $this_article);
 		                $smarty->assign('no_edit', 1);
                         $currenttemplate = "my_article.tpl";
@@ -225,6 +279,7 @@
                 if(!isset($_SESSION['user_id'])) {
                     $currenttemplate = 'signup.tpl';
 					$smarty->assign('page_has_form', true);
+					$smarty->assign('recaptcha', true);
 					$this_forms=array("user_registration");
 					$smarty->assign('this_forms', $this_forms);
 				}
@@ -255,7 +310,7 @@
 	else
 	{   /* links and menu items */
 		$log_in_out = "Login";
-		$log_in_out_url = "/login";
+		$log_in_out_url = "#";
 	}
 
     $smarty->assign('LoginMenuUrl', $log_in_out_url );
@@ -266,9 +321,9 @@
 	
 	/* populate array with featured publications for home page
 	   This function will need some intel to decide what to bring to each user 	*/
-    if($currenttemplate == 'home.tpl' or $currenttemplate == 'new_user.tpl' or $currenttemplate == 'new_user_valid.tpl')
+    if($currenttemplate == 'home.tpl' or $currenttemplate == 'new_user.tpl' or $currenttemplate == 'new_user_valid.tpl' or $currenttemplate == 'page404.tpl')
 	{
-        $smarty->assign('current_featured', get_featured());
+        $smarty->assign('current_featured', get_featured($_GET['search_pub']));
 	};
 	
 	/* set the real template for BODY */
@@ -286,52 +341,9 @@
 
     $smarty->assign('date_format', DMM_DATE_FORMAT);
 	$smarty->assign('smarty_date_format', SMARTY_DATE_FORMAT);
-
-	/* Start bringing from CMS DB */
-	switch ($_SESSION['language']) {
-    case "fr":
-        $smarty->assign('LoginMenu', $log_in_out );
-        $smarty->assign('InfoMenu', 'Infos');
-        $smarty->assign('NewsMenu', 'Actualités');
-        $smarty->assign('CalendarMenu', 'Calendrier');
-        $smarty->assign('ResultsMenu', 'Résultats');
-        $smarty->assign('MediaMenu', 'Médias');
-        $smarty->assign('GalleryMenu', 'Galleries');
-        $smarty->assign('VideoMenu', 'Vidéos');
-        $smarty->assign('AboutMenu', 'À propos');
-        $smarty->assign('WhoMenu', 'Qui sommes nous');
-        $smarty->assign('ContactMenu', 'Contact');
-        $smarty->assign('SocialMenu', 'Engagement social');
-        break;
-    case "en":
-        $smarty->assign('LoginMenu', $log_in_out);
-        $smarty->assign('InfoMenu', 'Info');
-        $smarty->assign('NewsMenu', 'News');
-        $smarty->assign('CalendarMenu', 'Calendar');
-        $smarty->assign('ResultsMenu', 'Results');
-        $smarty->assign('MediaMenu', 'Media');
-        $smarty->assign('GalleryMenu', 'Galeries');
-        $smarty->assign('VideoMenu', 'Videos');
-        $smarty->assign('AboutMenu', 'About us');
-        $smarty->assign('WhoMenu', 'Whow we are');
-        $smarty->assign('ContactMenu', 'Contact');
-        $smarty->assign('SocialMenu', 'Social Engagement');
-        break;
-    case "pt":
-        $smarty->assign('LoginMenu', $log_in_out);
-        $smarty->assign('InfoMenu', 'Informações');
-        $smarty->assign('NewsMenu', 'Notícias');
-        $smarty->assign('CalendarMenu', 'Calendário');
-        $smarty->assign('ResultsMenu', 'Resultados');
-        $smarty->assign('MediaMenu', 'Media');
-        $smarty->assign('GalleryMenu', 'Galerias');
-        $smarty->assign('VideoMenu', 'Vídeos');
-        $smarty->assign('AboutMenu', 'Sobre nós');
-        $smarty->assign('WhoMenu', 'Quem somos');
-        $smarty->assign('ContactMenu', 'Contatos');
-        $smarty->assign('SocialMenu', 'Engajamento Social');
-        break;
-	default :         $smarty->assign('LoginMenu', 'Language not supported');
-    }
+	
+	
+	/* Link of Login Menu */
+	$smarty->assign('LoginMenu', $log_in_out);
 
 	?>

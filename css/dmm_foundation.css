@@ -99,18 +99,19 @@ nav.tab-bar {
   background: #555555 "white"; }
   
 .dmm-active {
-    background:#000000; }
+    background:#000000;
+}
     
 .dmm-featured-pub {
     min-height:200px;
     background-color:transparent; 
     background:no-repeat center;
-    }
+}
     
 
 .clearing-assembled .clearing-container .carousel > ul {
     width: auto !important;
-    }
+}
 
 .dmm-tab-block{
     padding-left:10px !important;
@@ -119,4 +120,30 @@ nav.tab-bar {
 
 .clearing-caption {
      color:white !important;   
- }
+}
+ 
+.dmm-footer-bottom {
+    background:#555;
+    min-height:5em;
+    padding-top:1.8em;
+    color:#888;
+}
+
+    .dmm-footer-bottom a:link, a:visited {
+        color:#999;
+    }
+  
+    .dmm-footer-bottom a:hover, a:active {
+        color:white;
+    }
+
+    .dmm-footer-bottom ul {display: table; margin: 0 auto;}
+    .dmm-footer-bottom ul li {display: table-cell;}
+
+button, .button {
+    color:#FFF !important;
+}
+
+.button:hover {
+    color:#9FF !important;
+}

@@ -1,13 +1,15 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . '/Connections/dmm_db_connection.php'); 
 	
 ## Session
-If (!isset($session_id)) session_start();
+if (!isset($session_id)) session_start();
 
 ## Setup site defaults 
 define("DMM_DEFAULT_LANGUAGE", "pt");
 define("DMM_MAX_LOGO_IMG_SIZE", 1000000);
 define("DMM_DATE_FORMAT", "dd-mm-yyyy");
 define("SMARTY_DATE_FORMAT", "%d-%b-%Y");
+define("DMM_TITLE", "DemiMot - <span style='color:red;'>Beta</span>");
+
 ## img dir
 function default_image_dir (){
 	return "img/";
@@ -85,13 +87,22 @@ function post_handler($the_POST)
 	if ($the_POST['frm_submit']==1 and !$_SESSION['user_id'])
 	{
         $_return = login_in($the_POST);
+        if(!$_return) $_SESSION['reset_pwd']=true; elseif(isset($_SESSION['reset_pwd'])) unset($_SESSION['reset_pwd']);
 	} 
 	elseif ($the_POST['frm_submit']==5 and !$_SESSION['user_id'] ) { // is to register AND no one logged in AND the terms of service are accepted
 	// stilll validate whether every field is not empty
-	    if(isset($the_POST['frm_terms'])){
-	        $_return = user_registration($the_POST);
-		}else{
-		    $_return = "signup?err=" . urlencode("terms acceptance failed");
+	    $response = $the_POST['g-recaptcha-response'];
+	
+	    $resp = url_get_contents ($response, $_SERVER['REMOTE_ADDR']);
+		
+	    if($resp['success']){
+	        if(isset($the_POST['frm_terms'])){
+	            $_return = user_registration($the_POST);
+    		}else{
+		        $_return = "signup?err=" . urlencode("terms acceptance failed");
+		    }
+		} else {
+	        $_return = "signup?err=" . urlencode("captcha failed");			
 		}
 	}
 	elseif (check_user_rights($the_POST['frm_pub_id'], $the_POST['frm_pub_issue_id'], $the_POST['frm_article_id'])) { // If the user is the owner (or, latter, if he has the right
@@ -105,13 +116,26 @@ function post_handler($the_POST)
 				        $_return = "/edit-article-" . $save_article;
     				}
 	    		}
-		    	break;
+                break;
 		    case 11:
-			    $save_logo = save_this_image($the_POST, "article", "picture");
-    		    if($save_logo!==UPLOAD_ERR_OK)
-	    		{  
-				    $_return = "/edit-article-" . $the_POST['frm_article_id'] . "?message=" . urlencode($save_logo);
-	    		} else  $_return = "/edit-article-" . $the_POST['frm_article_id'];
+			    if($the_POST['frm_image_verb']=="add"){
+				$save_image_err = save_this_image($the_POST, "article", "picture");
+    		        if($save_image_err!==UPLOAD_ERR_OK)
+	    	    	{  
+			    	    $_return = "/edit-article-" . $the_POST['frm_article_id'] . "?message=" . urlencode($save_image_err);
+	    	    	} else  $_return = "/edit-article-" . $the_POST['frm_article_id'];
+				} elseif($the_POST['frm_image_verb']=="update"){
+					if($save_article = update_issue_article_image_properties($the_POST, $_SESSION['user_id']))
+echo "<pre> 
+
+                
+
+";
+include("dump_the_post.php");
+echo "
+</pre>";							
+				}
+				
 				break;
     		case 20:
                 if($save_pub = save_this_pub_basic_info($the_POST)){
@@ -128,9 +152,9 @@ function post_handler($the_POST)
 			    }
     			break;				    
     		case 22:
-                $save_logo = save_this_image($the_POST, "pub", "logo");
-		    	if($save_logo!==UPLOAD_ERR_OK){
-			        $_return = "/admin-pub-" . $the_POST['frm_pub_id'] . "?message=" . urlencode($save_logo);
+                $save_image_err = save_this_image($the_POST, "pub", "logo");
+		    	if($save_image_err!==UPLOAD_ERR_OK){
+			        $_return = "/admin-pub-" . $the_POST['frm_pub_id'] . "?message=" . urlencode($save_image_err);
 	            } else $_return = "/admin-pub-" . $the_POST['frm_pub_id'];
     	        break;
     		case 23: // add, change or delete sections from pub
@@ -171,9 +195,7 @@ function post_handler($the_POST)
     				$resp = add_pub_column_by_pub($the_POST['frm_pub_id'], $the_POST['frm_column_section'], $the_POST['column_staff_select'], $the_POST['frm_column_name']);
          		} 
 				$_return = $resp ? "/admin-pub-" . $the_POST['frm_pub_id'] : $_return;
-                include("dump_the_post.php");
-				echo "File: " . __FILE__ . " line: " . __LINE__ ;
-                break;	
+                break;
     		case 50:
 			    if($the_POST['frm_pub_issue_id'] and save_this_issue_css($the_POST))
                 break;	
@@ -188,17 +210,17 @@ function post_handler($the_POST)
     			break;	
     		case 52:
 			    if(if_not_published($the_POST['frm_pub_issue_id'])){
-        	        $save_logo = save_this_image($the_POST, "issue", "cover");
-        		    if($save_logo!==UPLOAD_ERR_OK){
-                        $_return = "/admin-issue-" . $the_POST['frm_pub_issue_id']. "?msgcover=" . urlencode($save_logo);
+        	        $save_image_err = save_this_image($the_POST, "issue", "cover");
+        		    if($save_image_err!==UPLOAD_ERR_OK){
+                        $_return = "/admin-issue-" . $the_POST['frm_pub_issue_id']. "?msgcover=" . urlencode($save_image_err);
                     } else $_return = "/admin-issue-" . $the_POST['frm_pub_issue_id'];
 				} else $_return = "/admin-issue-" . $the_POST['frm_pub_issue_id'];
     			break;	
     		case 53:
 			    if(if_not_published($the_POST['frm_pub_issue_id'])){
-    	            $save_logo = save_this_image($the_POST, "issue", "logo");
-    	    	    if($save_logo!==UPLOAD_ERR_OK){
-                        $_return = "/admin-issue-" . $the_POST['frm_pub_issue_id']. "?msglogo=" . urlencode($save_logo);
+    	            $save_image_err = save_this_image($the_POST, "issue", "logo");
+    	    	    if($save_image_err!==UPLOAD_ERR_OK){
+                        $_return = "/admin-issue-" . $the_POST['frm_pub_issue_id']. "?msglogo=" . urlencode($save_image_err);
                     } else $_return = "/admin-issue-" . $the_POST['frm_pub_issue_id'];
 				} else $_return = "/admin-issue-" . $the_POST['frm_pub_issue_id'];
     			break;	
@@ -207,8 +229,36 @@ function post_handler($the_POST)
         			$resp = discard_article($the_POST);
     			} elseif($the_POST['frm_manage_content_verb']=="add"){					
     				$resp = request_article($the_POST);
+         		} elseif($the_POST['frm_manage_content_verb']=="update"){					
+    				$resp = update_issue_article_properties($the_POST);
          		} 
 				$_return = "/admin-issue-" . $the_POST['frm_pub_issue_id'];
+                /*include("dump_the_post.php");
+				echo "File: " . __FILE__ . " line: " . __LINE__ ;
+                exit;	*/
+    			break;	
+    		case 55:	
+				if(isset($the_POST['frm_pub_issue_article_id']) and $the_POST['frm_pub_issue_article_id']){ 
+		            if($the_POST['frm_article_images_verb']=="confirm"){
+            			$resp = confirm_article_images_by_issue($the_POST);
+        			} 
+    				$_return = "/admin-issue-" . $the_POST['frm_pub_issue_id'];
+				}
+    			break;	
+    		case 56:	
+				if(isset($the_POST['frm_article_id']) and $the_POST['frm_article_id']){ 
+		            if($the_POST['frm_image_verb']=="add"){			
+    			    	$save_image_err = save_this_image($the_POST, "issue", "article");
+						if($save_image_err!==UPLOAD_ERR_OK){
+			                $_return = "/admin-issue-" . $the_POST['frm_pub_issue_id'] . "?message=" . urlencode($save_image_err);
+	                    }
+         		    } elseif($the_POST['frm_image_verb']=="update"){					
+    			    	$resp = update_issue_article_images_by_issue_article_image($the_POST);
+         	    	} elseif($the_POST['frm_image_verb']=="delete"){					
+    	    			$resp = remove_issue_article_images_by_issue_article_image($the_POST);
+             		} 
+    				
+				}
     			break;	
     		case 100:
 			    if($the_POST['frm_check_publish_issue'] and if_not_published($the_POST['frm_pub_issue_id'])){
@@ -298,6 +348,17 @@ function blocked_by_articles($pub_issue_id){
 	return $return;	
 }
 
+function get_pubs_of_contibuter($user_id){
+	$return=array();
+    global $dmm_db_connection;
+    $query_Recordset1 = "SELECT ps.dmm_pub_id as pub_id, p.pub_name FROM dmm_pub_staff ps INNER JOIN dmm_pubs p on ps.dmm_pub_id = p.pub_id WHERE ps.dmm_user_id = " . GetSQLValueString($user_id, "int"). " order by p.pub_name";
+	$Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error());
+    while($row_Recordset1 = mysql_fetch_array($Recordset1, MYSQL_ASSOC)) {
+          $return[]=$row_Recordset1;
+    }
+	return $return;	
+}
+
 function get_columns_by_pub($pub_id){
 	$return=array();
     global $dmm_db_connection;
@@ -320,13 +381,18 @@ function get_staff_by_pub($pub_id){
 	return $return;	
 }
 
-function get_featured($limit = 10)
+function get_featured($search="",$limit="12")
 {
 	$return=array();
     global $dmm_db_connection; /* SQL Esta correto !!! mas... featured nao esta definido mesmo ainda... */
-    $query_Recordset1 = "SELECT i.pub_id, i.pub_issue_id, i.pub_issue, p.pub_name, p.pub_mote, p.pub_slug, i.pub_issue_cover FROM dmm_pub_issues i inner join dmm_pubs p on i.pub_id = p.pub_id WHERE i.pub_issue_id IN (
-SELECT max(pub_issue_id) as pub_issue_id FROM dmm_pub_issues WHERE pub_issue_published group by pub_id) limit " . $limit;
-    $Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error());
+	$query_base = "SELECT i.pub_id, i.pub_issue_id, i.pub_issue, p.pub_name, p.pub_mote, p.pub_slug, i.pub_issue_cover FROM dmm_pub_issues i inner join dmm_pubs p on i.pub_id = p.pub_id WHERE i.pub_issue_id IN (
+SELECT max(pub_issue_id) as pub_issue_id FROM dmm_pub_issues WHERE pub_issue_published group by pub_id)";
+	if($search){
+		$query_base .= " AND p.pub_name like " . GetSQLValueString("%". $search . "%", "text") . " ";
+	}
+    $query_Recordset1 = $query_base . " LIMIT " . $limit;	
+	//echo $query_Recordset1; exit;
+	$Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error());
     while($row_Recordset1 = mysql_fetch_array($Recordset1, MYSQL_ASSOC)) {
           $return[]=$row_Recordset1;
     }
@@ -357,16 +423,16 @@ function get_old_issues ($pub_id, $last_issue){
 }
 
 
-function get_pub_by_slug($slug, $pid=NULL)
+function get_pub_by_slug($slug, $pid=NULL, $preview=0)
 {
 	$return=array();
     global $dmm_db_connection; 
 	if(is_null($pid)){
-        $query_Recordset1 = "SELECT i.pub_id, i.pub_issue_id, i.pub_issue, i.pub_issue_logo,  UNIX_TIMESTAMP(i.pub_issue_tstamp) as pub_issue_tstamp, p.pub_name, p.pub_mote, p.pub_slug, i.pub_issue_cover FROM dmm_pub_issues i inner join dmm_pubs p on i.pub_id = p.pub_id WHERE i.pub_issue_id IN (
+        $query_Recordset1 = "SELECT i.pub_id, i.pub_issue_id, i.pub_issue, i.pub_issue_logo,  UNIX_TIMESTAMP(i.pub_issue_tstamp) as pub_issue_tstamp, p.pub_name, p.pub_mote, p.pub_slug, i.pub_issue_cover, p.user_id FROM dmm_pub_issues i inner join dmm_pubs p on i.pub_id = p.pub_id WHERE i.pub_issue_id IN (
 SELECT max(pub_issue_id) as pub_issue_id
-FROM dmm_pub_issues WHERE pub_issue_published group by pub_id) and p.pub_slug=" . GetSQLValueString($slug, "text") . " limit 1";
+FROM dmm_pub_issues WHERE  (pub_issue_published OR 1=" . GetSQLValueString($preview, "int") . ") group by pub_id) and p.pub_slug=" . GetSQLValueString($slug, "text") . " limit 1";
 	} else {
-		$query_Recordset1 = "SELECT i.pub_id, i.pub_issue_id, i.pub_issue, i.pub_issue_logo,  UNIX_TIMESTAMP(i.pub_issue_tstamp) as pub_issue_tstamp, p.pub_name, p.pub_mote, p.pub_slug, i.pub_issue_cover FROM dmm_pub_issues i inner join dmm_pubs p on i.pub_id = p.pub_id WHERE i.pub_issue=" . GetSQLValueString($pid, "int") . " and pub_issue_published and p.pub_slug=" . GetSQLValueString($slug, "text") . " limit 1";
+		$query_Recordset1 = "SELECT i.pub_id, i.pub_issue_id, i.pub_issue, i.pub_issue_logo,  UNIX_TIMESTAMP(i.pub_issue_tstamp) as pub_issue_tstamp, p.pub_name, p.pub_mote, p.pub_slug, i.pub_issue_cover, p.user_id FROM dmm_pub_issues i inner join dmm_pubs p on i.pub_id = p.pub_id WHERE i.pub_issue=" . GetSQLValueString($pid, "int") . " AND (pub_issue_published OR 1=" . GetSQLValueString($preview, "int") . ") and p.pub_slug=" . GetSQLValueString($slug, "text") . " limit 1";
 	}
     $Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error());
     if($row_Recordset1 = mysql_fetch_assoc($Recordset1))
@@ -381,7 +447,7 @@ function get_articles_by_issue($pub_issue, $content=true)
     global $dmm_db_connection;
 	$return=array();
 	$whole_content = ($content) ? "a.article_subtitle, a.article_body, (SELECT pp.pub_name FROM dmm_pub_issues pi INNER JOIN dmm_pubs pp ON pi.pub_id = pp.pub_id WHERE pi.pub_issue_id = a.article_pub_issue_id AND a.article_pub_issue_id!=" . GetSQLValueString($pub_issue, "int") . ") as article_source, " : "";
-    $query_Recordset1 = "SELECT a.article_id, article_author_id, a.article_title, a.article_ready, " . $whole_content . " a.article_pub_issue_id, DATE_FORMAT(a.article_deadline, '%d-%m-%Y') as article_deadline, i.section_id FROM dmm_pub_issue_articles i INNER JOIN dmm_articles a ON i.article_id = a.article_id WHERE i.pub_issue_id=" . GetSQLValueString($pub_issue, "int") . "";
+    $query_Recordset1 = "SELECT a.article_id, article_author_id, a.article_title, a.article_ready, " . $whole_content . " a.article_pub_issue_id, DATE_FORMAT(a.article_deadline, '%d-%m-%Y') as article_deadline, i.section_id , i.article_weight, i.use_article_images FROM dmm_pub_issue_articles i INNER JOIN dmm_articles a ON i.article_id = a.article_id WHERE i.pub_issue_id=" . GetSQLValueString($pub_issue, "int") . "";
     $Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error());
     while($row_Recordset1 = mysql_fetch_array($Recordset1, MYSQL_ASSOC)) {
           $return[]=$row_Recordset1;
@@ -404,7 +470,12 @@ function get_published_articles_by_author($authid){
 function get_unpublished_articles_by_author($authid){
     global $dmm_db_connection;
 	$return=array();
-    $query_Recordset1 = "SELECT a.article_id, a.article_title, p.pub_issue, p.pub_issue_id, p.pub_issue_published, a.article_pub_issue_id, (SELECT pp.pub_name FROM dmm_pub_issues pi INNER JOIN dmm_pubs pp ON pi.pub_id = pp.pub_id WHERE pi.pub_issue_id = a.article_pub_issue_id) as article_source FROM dmm_articles a LEFT JOIN dmm_pub_issues p on a.article_pub_issue_id = p.pub_issue_id WHERE (not p.pub_issue_published or isnull(p.pub_issue_published)) and a.article_author_id=" . GetSQLValueString($authid, "int") . " order by a.article_id DESC";
+    $query_Recordset1 = "SELECT a.article_id, a.article_title, p.pub_issue, p.pub_issue_id, p.pub_issue_published, a.article_pub_issue_id, 
+	                       (SELECT pp.pub_name FROM dmm_pub_issues pi INNER JOIN dmm_pubs pp ON pi.pub_id = pp.pub_id  WHERE pi.pub_issue_id = a.article_pub_issue_id
+                            UNION 
+		                    SELECT ppp.pub_name FROM dmm_pubs ppp WHERE ppp.pub_id = a.article_spontaneous limit 1) as article_source
+                         FROM dmm_articles a LEFT JOIN dmm_pub_issues p           on a.article_pub_issue_id = p.pub_issue_id 
+                         WHERE (not p.pub_issue_published or isnull(p.pub_issue_published)) AND a.article_author_id =" . GetSQLValueString($authid, "int") . " order by a.article_id DESC";
     $Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error());
     while($row_Recordset1 = mysql_fetch_array($Recordset1, MYSQL_ASSOC)) {
           $return[]=$row_Recordset1;
@@ -470,8 +541,57 @@ function get_pub_by_pub_id($pubid) {
 	if($row_Recordset1 = mysql_fetch_assoc($Recordset1))
 	{
 		$return = $row_Recordset1;
-	}else $return="";
+	}
+	
+	if($this_pub_sections = get_sections_from_template_by_pub($_GET['pubid'])){
+        $return['pub_sections'] = array();
+        $return['pub_sections'] = $this_pub_sections;
+	}
+						
+	if($this_pub_unpublished_issues = get_issues_by_pub($_GET['pubid'])){
+        $return['pub_unpublished_issues'] = array();
+        $return['pub_unpublished_issues'] = $this_pub_unpublished_issues;
+	}
+
+    if($this_pub_published_issues = get_issues_by_pub($_GET['pubid'], 1)){
+        $return['pub_published_issues'] = array();
+        $return['pub_published_issues'] = $this_pub_published_issues;
+	}
+	
+	if($this_pub_columns = get_columns_by_pub($_GET['pubid'])){
+        $return['pub_columns'] = array();
+        $return['pub_columns'] = $this_pub_columns;
+	}
+
+    if($this_pub_staff = get_staff_by_pub($_GET['pubid'])){
+        $return['pub_staff'] = array();
+        $return['pub_staff'] = $this_pub_staff;
+	}
 	return $return;		
+}
+
+function get_pub_types($language, $where=0){
+    global $dmm_db_connection;
+	$return=array();
+    $query_Recordset1 = "SELECT pub_type_id, pub_type_" . $language . " as pub_type FROM pub_types ";
+	if($where) $query_Recordset1 .= " WHERE pub_type_id = " . GetSQLValueString($where, "int") ;
+    $Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error());
+	while($row_Recordset1 = mysql_fetch_array($Recordset1, MYSQL_ASSOC)) {
+        $return[]=$row_Recordset1;
+    }
+	return $return;			
+}
+
+function get_pub_income_status($language, $where=0){
+    global $dmm_db_connection;
+	$return=array();
+    $query_Recordset1 = "SELECT pub_income_id, pub_income_" . $language . " as pub_income FROM pub_income_status ";
+	if($where) $query_Recordset1 .= " WHERE pub_income_id= " . GetSQLValueString($where, "int") ;
+    $Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error());
+	while($row_Recordset1 = mysql_fetch_array($Recordset1, MYSQL_ASSOC)) {
+        $return[]=$row_Recordset1;
+    }
+	return $return;			
 }
 
 function get_sections_from_template_by_pub($pubid) {
@@ -510,29 +630,27 @@ function get_issues_by_pub($pubid, $published=0) {
 function get_this_issue_data($piid) {
     global $dmm_db_connection;
 	$return=0;
-    $query_Recordset1 = "SELECT pi.pub_id, pi.pub_issue, pi.pub_issue_id, p.pub_name, pi.pub_issue_cover, UNIX_TIMESTAMP(pi.pub_issue_tstamp) as pub_issue_tstamp, pi.pub_issue_logo, pi.pub_issue_published FROM dmm_pub_issues AS pi INNER JOIN dmm_pubs AS p ON pi.pub_id = p.pub_id WHERE pi.pub_issue_id = " . GetSQLValueString($piid, "int") . " AND p.user_id = " . GetSQLValueString($_SESSION['user_id'], "int");
-    $Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error());
-	if($row_Recordset1 = mysql_fetch_assoc($Recordset1)) $return = $row_Recordset1;
+    $query_Recordset1 = "SELECT pi.pub_id, pi.pub_issue, pi.pub_issue_id, p.pub_name, p.pub_slug, pi.pub_issue_cover, UNIX_TIMESTAMP(pi.pub_issue_tstamp) as pub_issue_tstamp, pi.pub_issue_logo, pi.pub_issue_published FROM dmm_pub_issues AS pi INNER JOIN dmm_pubs AS p ON pi.pub_id = p.pub_id WHERE pi.pub_issue_id = " . GetSQLValueString($piid, "int") . " AND p.user_id = " . GetSQLValueString($_SESSION['user_id'], "int");
+    if($Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error())){
+	    if($row_Recordset1 = mysql_fetch_assoc($Recordset1)) $return = $row_Recordset1;
 
-    if ($this_css = get_pub_issue_css($piid, $this_css)) $return['pub_issue_css']=$this_css['pub_issue_css'];	
+        if ($this_css = get_pub_issue_css($piid, $this_css)) $return['pub_issue_css']=$this_css['pub_issue_css'];	
 		
-	if ($this_sections = get_sections_by_issue($piid) and $this_sections){
-		$return['issue_sections'] = array();
-	    $return['issue_sections'] = $this_sections;	
+	    if ($this_sections = get_sections_by_issue($piid) and $this_sections){
+	    	$return['issue_sections'] = array();
+	        $return['issue_sections'] = $this_sections;	
+	    }
+	
+	    if($this_articles = get_articles_by_issue($piid, false)){ // false = we don't need all data here... just ids and title
+	    	$return['issue_articles'] = array();
+	        $return['issue_articles'] = $this_articles;
+	    }
+	
+	    if($this_staff = get_staff_by_pub($return['pub_id'])){
+		    $return['issue_staff'] = array();
+	        $return['issue_staff'] = $this_staff;
+	    }
 	}
-	
-	if($this_articles = get_articles_by_issue($piid, false)){ // false = we don't need all data here... just ids and title
-		$return['issue_articles'] = array();
-	    $return['issue_articles'] = $this_articles;
-	}
-	
-	if($this_staff = get_staff_by_pub($return['pub_id'])){
-		$return['issue_staff'] = array();
-	    $return['issue_staff'] = $this_staff;
-	}
-	
-	
-	
 	return $return;		
 }
 
@@ -561,11 +679,97 @@ a.article_pub_issue_id FROM dmm_pub_issue_articles i INNER JOIN dmm_articles a O
 	return $return;		
 }
 
+function get_article_images($article_id){
+    if($article_id){
+		$return=array();
+        global $dmm_db_connection;
+        $query_Recordset1 = "SELECT article_image_id, article_image_filename, article_image_caption, article_image_credits, article_image_weight FROM dmm_article_images WHERE article_id=" . GetSQLValueString($article_id, "int") . " ORDER BY article_image_weight";
+		// echo $query_Recordset1; exit;
+        $Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error());
+        while($row_Recordset1 = mysql_fetch_array($Recordset1, MYSQL_ASSOC)) {
+            $return[]=$row_Recordset1;
+        }
+	} else {$return = null;}
+    return $return;    
+}
+
 
 
 /*****************************************************************************
  ************              Insert / update Functions              ************ 
  *****************************************************************************/
+function update_issue_article_images_by_issue_article_image($the_post){
+    $_return = false;
+	global $dmm_db_connection;
+    if(	$the_post['frm_article_image_id'] ){
+		$query_Recordset1="UPDATE dmm_issue_article_images set article_image_caption=" . GetSQLValueString($the_post['frm_image_caption'], "text") . ", 
+		                   article_image_credits=" . GetSQLValueString($the_post['frm_image_copyright'], "text") . ", article_image_weight=" . GetSQLValueString($the_post['frm_image_weight'], "int") . " 
+						   WHERE issue_article_image_id=" . GetSQLValueString($the_post['frm_article_image_id'], "int") . " AND article_id=" . GetSQLValueString($the_post['frm_article_id'], "int") . "
+                           AND issue_id=" . GetSQLValueString($the_post['frm_pub_issue_id'], "int") . " 
+						   AND NOT (Select pub_issue_published FROM dmm_pub_issues WHERE pub_issue_id = " . GetSQLValueString($the_post['frm_pub_issue_id'], "int") . ")";
+        if($_resp = mysql_query($query_Recordset1, $dmm_db_connection)){
+            $_return = true;
+		}
+	}	
+	return $_return;
+}
+
+function remove_issue_article_images_by_issue_article_image($the_post){
+    $_return = false;
+	global $dmm_db_connection;
+    if(	$the_post['frm_article_image_id'] ){ //NOT image_source means image was added to the issue (image_source=0) and does not belong to the original article (image_source=1) (1==true);
+		$query_Recordset1="Select article_image_filename FROM dmm_issue_article_images WHERE issue_article_image_id=" . GetSQLValueString($the_post['frm_article_image_id'], "int") . " 
+		                   AND article_id=" . GetSQLValueString($the_post['frm_article_id'], "int") . " AND issue_id=" . GetSQLValueString($the_post['frm_pub_issue_id'], "int") . " 
+						   AND NOT image_source 
+						   AND NOT (Select pub_issue_published FROM dmm_pub_issues WHERE pub_issue_id = " . GetSQLValueString($the_post['frm_pub_issue_id'], "int") . ")";
+        $Recordset1 = mysql_query($query_Recordset1, $dmm_db_connection) or die(mysql_error());
+		if($row_Recordset1 = mysql_fetch_assoc($Recordset1)) {
+			$image_filename = $row_Recordset1['article_image_filename'];						   
+		    $query_Recordset1="DELETE FROM dmm_issue_article_images 
+		                       WHERE issue_article_image_id=" . GetSQLValueString($the_post['frm_article_image_id'], "int") . " AND article_id=" . GetSQLValueString($the_post['frm_article_id'], "int") . "
+							   AND issue_id=" . GetSQLValueString($the_post['frm_pub_issue_id'], "int") . " 
+							   AND NOT image_source 
+							   AND NOT (Select pub_issue_published FROM dmm_pub_issues WHERE pub_issue_id = " . GetSQLValueString($the_post['frm_pub_issue_id'], "int") . ")";
+            if($_resp = mysql_query($query_Recordset1, $dmm_db_connection)){
+                $_return = true;
+                unlink(default_image_dir() . "$image_filename");
+			}
+		}
+	}	
+	
+/*	echo "<pre>
+
+                
+
+";
+include("dump_the_post.php");
+echo "
+</pre>";		
+	*/
+}
+
+function confirm_article_images_by_issue ($the_post){
+    $_return = false;
+	global $dmm_db_connection;
+    if(	$the_post['frm_pub_issue_article_id']  and $the_post['frm_pub_issue_id'] and if_not_published($the_post['frm_pub_issue_id']) ){
+            $query_Recordset1= "DELETE from dmm_issue_article_images WHERE issue_id=".GetSQLValueString($the_post['frm_pub_issue_id'], "int")." AND article_id=".GetSQLValueString($the_post['frm_pub_issue_article_id'], "int").
+			                   " AND image_source = 1";
+			$_resp = mysql_query($query_Recordset1, $dmm_db_connection);
+		if($the_post['frm_use_article_images']){
+            $query_Recordset1= "INSERT INTO dmm_issue_article_images (issue_id, article_image_id, article_id, article_image_weight, article_image_filename, article_image_caption, article_image_credits, image_source)
+			                    SELECT " . GetSQLValueString($the_post['frm_pub_issue_id'], "int") . ", ai.article_image_id, ai.article_id, ai.article_image_weight, ai.article_image_filename, ai.article_image_caption, 
+								ai.article_image_credits, 1 from dmm_article_images ai WHERE ai.article_id=" . GetSQLValueString($the_post['frm_pub_issue_article_id'], "int") ;
+			$_resp = mysql_query($query_Recordset1, $dmm_db_connection);
+		}
+		$query_Recordset1= "UPDATE dmm_pub_issue_articles SET use_article_images = " . ((isset($the_post['frm_use_article_images']) and $the_post['frm_use_article_images']) ? 1 : 0) . 
+                           " WHERE pub_issue_id = " . GetSQLValueString($the_post['frm_pub_issue_id'], "int") . " and article_id = " . GetSQLValueString($the_post['frm_pub_issue_article_id'], "int") ;
+						  // echo $query_Recordset1;exit;
+        if($_resp = mysql_query($query_Recordset1, $dmm_db_connection)){
+            $_return = true;
+		}
+	}
+	return $_return;
+}
  
 function activate_user($user_id, $user_hash){
     $_return = false;
@@ -726,11 +930,23 @@ function save_this_issue_css($this_issue){
     return $return;
 }
 
+function update_issue_article_image_properties($the_POST){
+    global $dmm_db_connection;
+	$return=0;
+	if (if_not_published($the_POST['frm_pub_issue_id'])){
+		    $query_Recordset1 = "UPDATE dmm_article_images SET article_image_weight=" . GetSQLValueString($the_POST['frm_image_weight'], "int") . 
+			                    ", article_image_caption=" . GetSQLValueString($the_POST['frm_image_caption'], "text") . ", article_image_credits=" . GetSQLValueString($the_POST['frm_image_copyright'], "text") . 
+								" WHERE article_image_id = " . GetSQLValueString($the_POST['frm_article_image_id'], "int") . " AND article_id=" . GetSQLValueString($the_POST['frm_article_id'], "int");
+            $return = mysql_query($query_Recordset1, $dmm_db_connection);
+	}
+    return $return;
+}
+
 function save_this_image ($this_data, $img_destination, $image_usage)
 {
     global $dmm_db_connection;
 	$return="";
-	
+   
     try {
         // Undefined | Multiple Files | $_FILES Corruption Attack
         // If this request falls under any of them, treat it invalid.
@@ -770,27 +986,35 @@ function save_this_image ($this_data, $img_destination, $image_usage)
         }
 
         // On this example, obtain safe unique name from its binary data.
-		$file_name = sha1_file($_FILES['frm_image_upload']['tmp_name']);
+		$file_name = sha1(sha1_file($_FILES['frm_image_upload']['tmp_name']). session_id());
 		if (file_exists(default_image_dir () . $file_name . "." . $ext)){
             throw new RuntimeException('File already exists');			
 		}
+
 	    if (!move_uploaded_file($_FILES['frm_image_upload']['tmp_name'], default_image_dir () . $file_name . "." . $ext)) {
             throw new RuntimeException('Failed to move uploaded file.');
         }
 		else {
 			if($img_destination == "pub"){
                 if($save_pub = save_old_pub_details($this_data['frm_pub_id'], "logo")){
-        		    $query_Recordset1 = "update dmm_pubs set pub_logo=" . GetSQLValueString($file_name . "." . $ext, "text") . " WHERE pub_id = " . GetSQLValueString($this_data['frm_pub_id'], "int");
-                    $save_logo = mysql_query($query_Recordset1, $dmm_db_connection);
+        		    $query_Recordset1 = "UPDATE dmm_pubs set pub_logo=" . GetSQLValueString($file_name . "." . $ext, "text") . " WHERE pub_id = " . GetSQLValueString($this_data['frm_pub_id'], "int");
+                    $save_image = mysql_query($query_Recordset1, $dmm_db_connection);
 	            }
 			} elseif ($img_destination == "issue"){
-                $query_Recordset1="update dmm_pub_issues set pub_issue_".$image_usage." = ".GetSQLValueString($file_name.".".$ext, "text")." WHERE pub_issue_id = ".GetSQLValueString($this_data['frm_pub_issue_id'], "int");
-				$save_logo = mysql_query($query_Recordset1, $dmm_db_connection);
+				if($image_usage!="article"){ // if destination = issue but reason NOT = article
+                    $query_Recordset1="UPDATE dmm_pub_issues set pub_issue_".$image_usage." = ".GetSQLValueString($file_name.".".$ext, "text")." WHERE pub_issue_id = ".GetSQLValueString($this_data['frm_pub_issue_id'], "int");
+				    $save_image = mysql_query($query_Recordset1, $dmm_db_connection);
+				} else { //if destination = issue AND reason = article
+                    $query_Recordset1="INSERT INTO dmm_issue_article_images (issue_id, article_id, article_image_filename, article_image_caption, article_image_credits, article_image_weight) values (" . GetSQLValueString($this_data['frm_pub_issue_id'], "int"). ", " . GetSQLValueString($this_data['frm_article_id'], "int"). ", ".GetSQLValueString($file_name.".".$ext, "text").", " . GetSQLValueString($this_data['frm_image_caption'], "text"). ", " . GetSQLValueString($this_data['frm_image_copyright'], "text"). ", " . GetSQLValueString($this_data['frm_image_weight'], "int"). ")";
+					//echo $query_Recordset1; exit;
+					$save_image = mysql_query($query_Recordset1, $dmm_db_connection);
+				} 
 			} elseif ($img_destination == "article"){ 
-                $query_Recordset1="insert into dmm_article_images (article_image_weight, article_id, article_image_filename, article_image_caption, article_image_credits) 
+                $query_Recordset1="INSERT INTO dmm_article_images (article_image_weight, article_id, article_image_filename, article_image_caption, article_image_credits) 
 				                   VALUES (" . GetSQLValueString($this_data['frm_image_weight'], "int") . ", "  . GetSQLValueString($this_data['frm_article_id'], "int") . ", " . GetSQLValueString($file_name.".".$ext, "text") .                                   ", " . GetSQLValueString($this_data['frm_image_caption'], "text") . ", " . GetSQLValueString($this_data['frm_image_copyright'], "text") . " )";
-				$save_logo = mysql_query($query_Recordset1, $dmm_db_connection);
+				$save_image = mysql_query($query_Recordset1, $dmm_db_connection);
 			}
+			
             return $return;			
 		}
     } catch (RuntimeException $e) {
@@ -800,7 +1024,6 @@ function save_this_image ($this_data, $img_destination, $image_usage)
 
 
 function save_this_article($the_data, $user_id){
-	
     if($the_data['frm_article_deadline']){
 		$this_date = explode('-', $the_data['frm_article_deadline']);
 		$savedate = checkdate($this_date[1],$this_date[0],$this_date[2]) ? $this_date[2]."-".$this_date[1]."-".$this_date[0] : "";
@@ -808,10 +1031,17 @@ function save_this_article($the_data, $user_id){
     global $dmm_db_connection;
 	$return=0;
 	if($the_data['frm_article_id']!="new"){
+        if(isset($the_data['frm_article_pub']) and $the_data['frm_article_pub']){
+            $spontaneus = ", article_spontaneous = " . GetSQLValueString($the_data['frm_article_pub'], "int"); 
+        }
 		$resp = save_article_last_version($the_data['frm_article_id']);
-        $query_Recordset1 = "UPDATE dmm_articles SET article_title = " . GetSQLValueString($the_data['frm_article_title'], "text")  . ", article_subtitle=" . GetSQLValueString($the_data['frm_article_subtitle'], "text") . ", article_body=" . GetSQLValueString($the_data['frm_article_body'], "text") . ", article_slug=" . GetSQLValueString(Slugfy($the_data['frm_article_title'], "'"), "text") . (isset($the_data['frm_article_ready']) ? ", article_ready=1 ": ", article_ready=0") . ", article_version_id=article_version_id+1 WHERE article_id=" . GetSQLValueString($the_data['frm_article_id'], "int") . " and article_author_id=" . GetSQLValueString($user_id, "int") ." and isnull(article_pub_tstamp)" ; 
+        $query_Recordset1 = "UPDATE dmm_articles SET article_title = " . GetSQLValueString($the_data['frm_article_title'], "text")  . ", article_subtitle=" . GetSQLValueString($the_data['frm_article_subtitle'], "text") . ", article_body=" . GetSQLValueString($the_data['frm_article_body'], "text") . ", article_slug=" . GetSQLValueString(Slugfy($the_data['frm_article_title'], "'"), "text") . (isset($the_data['frm_article_ready']) ? ", article_ready=1 ": ", article_ready=0") . ", article_version_id=article_version_id+1" . $spontaneus . " WHERE article_id=" . GetSQLValueString($the_data['frm_article_id'], "int") . " and article_author_id=" . GetSQLValueString($user_id, "int") ." and isnull(article_pub_tstamp)" ; 
 	} else { 
-	    $query_Recordset1 = "INSERT INTO dmm_articles (article_author_id, article_pub_pauta, article_pub_issue_id, article_title, article_subtitle, article_body, article_slug, article_ready, article_deadline) VALUES (" . GetSQLValueString($user_id, "int") . ", " . GetSQLValueString($the_data['frm_article_pub_pauta'], "int") . ", " . GetSQLValueString($the_data['frm_article_pub_issue_id'], "int") . ", " . GetSQLValueString($the_data['frm_article_title'], "text") . ", " . GetSQLValueString($the_data['frm_article_subtitle'], "text") . ", " . GetSQLValueString($the_data['frm_article_body'], "text") . ", " . GetSQLValueString(Slugfy($the_data['frm_article_title'], "'"), "text") . (isset($the_data['frm_article_ready']) ? ", 1 ": ", 0") . ", " . GetSQLValueString($savedate, "text") . ")";	
+        if(isset($the_data['frm_article_pub']) and $the_data['frm_article_pub']){
+            $spontaneus1 = ", article_spontaneous ";
+			$spontaneus2 = ", " . GetSQLValueString($the_data['frm_article_pub'], "int");
+        }
+	    $query_Recordset1 = "INSERT INTO dmm_articles (article_author_id, article_pub_pauta, article_pub_issue_id, article_title, article_subtitle, article_body, article_slug, article_ready, article_deadline". $spontaneus1 . ") VALUES (" . GetSQLValueString($user_id, "int") . ", " . GetSQLValueString($the_data['frm_article_pub_pauta'], "int") . ", " . GetSQLValueString($the_data['frm_article_pub_issue_id'], "int") . ", " . GetSQLValueString($the_data['frm_article_title'], "text") . ", " . GetSQLValueString($the_data['frm_article_subtitle'], "text") . ", " . GetSQLValueString($the_data['frm_article_body'], "text") . ", " . GetSQLValueString(Slugfy($the_data['frm_article_title'], "'"), "text") . (isset($the_data['frm_article_ready']) ? ", 1 ": ", 0") . ", " . GetSQLValueString($savedate, "text") . $spontaneus2 . ")";	
 	}
     if($return = mysql_query($query_Recordset1, $dmm_db_connection)){
 	    $return = ($the_data['frm_article_id']=="new") ? mysql_insert_id() : $return;
@@ -823,7 +1053,7 @@ function save_this_article($the_data, $user_id){
 function save_article_last_version($artid){
     global $dmm_db_connection;
     $return=0;
-    $query_Recordset1 = "INSERT INTO dmm_articles_history (article_id, article_version_id, article_author_id, article_pub_issue_id, article_pub_pauta, article_tstamp, article_pub_tstamp, article_title, article_subtitle, article_body, article_slug, article_ready, article_deadline) SELECT article_id, article_version_id, article_author_id, article_pub_issue_id, article_pub_pauta, article_tstamp, article_pub_tstamp, article_title, article_subtitle, article_body, article_slug, article_ready, article_deadline FROM dmm_articles WHERE article_id = " . GetSQLValueString($artid,"int");
+    $query_Recordset1 = "INSERT INTO dmm_articles_history (article_id, article_version_id, article_author_id, article_pub_issue_id, article_pub_pauta, article_tstamp, article_pub_tstamp, article_title, article_subtitle, article_body, article_slug, article_ready, article_deadline, article_spontaneous) SELECT article_id, article_version_id, article_author_id, article_pub_issue_id, article_pub_pauta, article_tstamp, article_pub_tstamp, article_title, article_subtitle, article_body, article_slug, article_ready, article_deadline, article_spontaneous FROM dmm_articles WHERE article_id = " . GetSQLValueString($artid,"int");
     $return = mysql_query($query_Recordset1, $dmm_db_connection);
     return $return;	
 }
@@ -837,13 +1067,17 @@ function save_this_pub_basic_info($this_pub){
         $return = save_old_pub_details($this_pub['frm_pub_id'], "basic");
 	    $query_Recordset1 = "update dmm_pubs set pub_country=" . GetSQLValueString($this_pub['country'], "text") . ", pub_language=" . GetSQLValueString($this_pub['language'], "text") . ", pub_name=" . GetSQLValueString($this_pub['frm_publication_name'], "text") . ", pub_mote=" . GetSQLValueString($this_pub['frm_publication_mote'], "text") . ", pub_slug=" . $this_slug . " WHERE pub_id = " . $this_pub_id;
 	} else {
-        $query_Recordset1 = "insert into dmm_pubs (pub_country, pub_language, user_id, pub_name, pub_mote, pub_slug) values (" . GetSQLValueString($this_pub['country'], "text") . ", " . GetSQLValueString($this_pub['language'], "text") . ", " . GetSQLValueString($_SESSION['user_id'], "int") . ", " . GetSQLValueString($this_pub['frm_publication_name'], "text") . ", " . GetSQLValueString($this_pub['frm_publication_mote'], "text") . ", " . $this_slug . ")";
+        $query_Recordset1 = "insert into dmm_pubs (pub_country, pub_language, user_id, pub_name, pub_mote, pub_slug, pub_type, pub_income_status, pub_style) values (" . GetSQLValueString($this_pub['country'], "text") . ", " . GetSQLValueString($this_pub['language'], "text") . ", " . GetSQLValueString($_SESSION['user_id'], "int") . ", " . GetSQLValueString($this_pub['frm_publication_name'], "text") . ", " . GetSQLValueString($this_pub['frm_publication_mote'], "text") . ", " . $this_slug . ", " . GetSQLValueString($this_pub['frm_publication_type'], "int") . ", " . GetSQLValueString($this_pub['frm_publication_income'], "int") . ", " . GetSQLValueString($this_pub['frm_publication_style'], "int") . ")";
 	}
     if(mysql_query($query_Recordset1, $dmm_db_connection)){
         if($this_pub['frm_pub_id']=="new") {
-			$new_id = mysql_insert_id();
-            $query_Recordset1 = "insert into dmm_pub_staff (dmm_pub_id, dmm_user_id) values (" . $new_id . ", " . $_SESSION['user_id'] . ")";
+    		$new_id = mysql_insert_id();
+            $query_Recordset1 = "insert into dmm_pub_staff (dmm_pub_id, dmm_user_id) values (" . $new_id . ", " . $_SESSION['user_id'] . ")"; // owner is always added as a contributor
 			$return = (mysql_query($query_Recordset1, $dmm_db_connection)) ? $new_id : $return ;
+			if($this_pub['frm_publication_style']==2) { // if pub style = 'news feed' then there will be no issues (1, 2, 3....) but an 'implicit' issue 0 (Zero).
+                $query_Recordset1 = "insert into dmm_pub_issues (pub_id, pub_issue) values (" . $new_id . ", 0)";
+			    $return = (mysql_query($query_Recordset1, $dmm_db_connection)) ? $new_id : $return ;
+		    }
 		}
     };
     return $return;	
@@ -992,15 +1226,26 @@ function request_article($the_post){
 	$the_data['frm_article_deadline']	            =  $the_post['frm_pub_issue_deadline'];
 	$the_data['frm_article_id']                     =  "new"; // so to allow creation of new article inside the function	
 
-	//   Call function - the result is the insert id.
+	// Save function - the result is the insert id.
 	if($new_art_id = save_this_article($the_data, $user_id)){
 	
 	// Insert in this issue
 	    $query_Recordset1 = "INSERT INTO dmm_pub_issue_articles (pub_issue_id, article_id, section_id, user_id, article_weight) values (" .  GetSQLValueString($the_post['frm_pub_issue_id'], "int") . "," . 
-                         GetSQLValueString($new_art_id, "int") . ", " . GetSQLValueString($the_post['frm_pub_issue_article_section'], "int") . "," . GetSQLValueString($user_id, "int") . ", 0)";
+                         GetSQLValueString($new_art_id, "int") . ", " . GetSQLValueString($the_post['frm_pub_issue_article_section'], "int") . "," . GetSQLValueString($user_id, "int") . ", " . GetSQLValueString($the_post['frm_pub_issue_article_weight'], "int") . ")";
+
         $return = mysql_query($query_Recordset1, $dmm_db_connection);
 	}
     return $new_art_id;
+}
+
+function update_issue_article_properties($the_post){	
+    global $dmm_db_connection;
+	$return=0;
+	if($the_post['frm_pub_issue_article_id'] and $the_post['frm_pub_issue_id']){
+	    $query_Recordset1 = "UPDATE dmm_pub_issue_articles SET section_id=" .  GetSQLValueString($the_post['frm_pub_issue_article_section'], "int") . ", article_weight=" .  GetSQLValueString($the_post['frm_pub_issue_article_weight'], "int") . " WHERE pub_issue_id=" . GetSQLValueString($the_post['frm_pub_issue_id'], "int") . " AND article_id=" . GetSQLValueString($the_post['frm_pub_issue_article_id'], "int") . " AND NOT (Select pub_issue_published FROM dmm_pub_issues WHERE pub_issue_id = " . GetSQLValueString($the_post['frm_pub_issue_id'], "int") . ")"; // not after publishing
+        $return = mysql_query($query_Recordset1, $dmm_db_connection);
+	}
+    return $return;
 }
 
 function publish_issue($this_pub_issue_id){
@@ -1073,6 +1318,7 @@ function delete_issue_section_by_issue ($pub_issue_id, $sectionid){
 	return $return;			
 }
 
+/************************* DO Somethihg functions *****************************/
 
 function Slugfy($str, $replace=array(), $delimiter='-') {
     setlocale(LC_ALL, 'en_US.UTF8');
@@ -1087,5 +1333,18 @@ function Slugfy($str, $replace=array(), $delimiter='-') {
     setlocale(LC_ALL,NULL);
 	
 	return $clean;
+}
+
+function url_get_contents ($response, $remoteip) {
+    if (!function_exists('curl_init')){ 
+        die('CURL is not installed!');
+    }
+	$mykey = file_get_contents($_SERVER["DOCUMENT_ROOT"] . '/../data/gcaptcha.txt');
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify?secret=". $mykey . "&response=".$response."&remoteip=".$remoteip);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $output = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($output, true);
 }
 ?>

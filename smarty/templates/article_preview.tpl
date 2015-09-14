@@ -1,6 +1,6 @@
 <div class="large-8 medium-10 small-12 columns">
     <!--[dmm_article_image_handler assign='article_image' article_id=$this_content.article_id]--><!-- This should go... It should be in the controler, not in the template... it is not an output funtion but a content retrieving function -->
-    <div class="panel"><!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
+    <div class="panel"><!--[if $debug]--><span style="color:red;"><!--[$smarty.template]--></span><!--[/if]-->
         <h2><!--[$this_content.article_title|escape]--></h2><h5><!--[$this_content.article_subtitle|escape]--></h5>
             <!--[if $this_content.article_source]--><p>source: <!--[$this_content.article_source|escape]--></p><!--[/if]-->
     </div>

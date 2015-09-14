@@ -50,7 +50,7 @@ function VATrack () {
     $TrkDB = mysqli_connect(VATrack_HostName(), VATrack_User_Name(), VATrack_Password(), VATrack_DB_Name());
     
     // Prepare and call Stored Procedure
-	$Trk_Sql = "INSERT INTO fdan_demimotcom1.activity_log_" . date("Y_m_d") . " (IP, http_response, user_agent, user_id, URL, Request)  VALUES ('" . $_SERVER['REMOTE_ADDR'] . "', " . http_response_code() . ", '" . mysql_real_escape_string($_SERVER['HTTP_USER_AGENT']) . "', " . (isset($_SESSION['user_id'])?$_SESSION['user_id']:0) . ", '" . mysql_real_escape_string($_SERVER['REQUEST_URI']) . "', '" . base64_encode(serialize($Filtered)) . "')";
+	$Trk_Sql = "INSERT INTO fdan_demimotcom1.activity_log_" . date("Y_m_d") . " (IP, session, http_response, user_agent, user_id, URL, Request)  VALUES ('" . $_SERVER['REMOTE_ADDR'] . "', '" . mysql_real_escape_string(session_id()) . "', " . http_response_code() . ", '" . mysql_real_escape_string($_SERVER['HTTP_USER_AGENT']) . "', " . (isset($_SESSION['user_id'])?$_SESSION['user_id']:0) . ", '" . mysql_real_escape_string($_SERVER['REQUEST_URI']) . "', '" . base64_encode(serialize($Filtered)) . "')";
     // below the original
 	// $Trk_Sql = "Call Ins_user_activity_today ('" . $_SERVER['REMOTE_ADDR'] . "', " . (isset($_SESSION['VisitorID'])?$_SESSION['VisitorID']:0) . ", '"  . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . "', '" . base64_encode(serialize($Filtered)) . "')";
     $TrkResults = mysqli_query($TrkDB, $Trk_Sql);

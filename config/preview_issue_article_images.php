@@ -1,5 +1,6 @@
 <?php 
      require_once("../Connections/dmm-db-info.php");
+     require_once("clean_all.php");
     /*
      * Script:    Preview Issue Article 
      * Copyright: 2010 - Allan Jardine, 2012 - Chris Wright, 2015 Julio Soares
@@ -10,17 +11,9 @@
      * Easy set variables
      */
      
-    /* Array of database columns which should be read and sent back to DataTables. Use a space where
-     * you want to insert a non-database field (for example a counter or static image)
-     */
-    $aColumns = array('article_id', 'article_image_weight', 'article_image_filename', 'article_image_caption', 'article_image_credits');
-     
     /* Indexed column (used for fast and accurate table cardinality) */
     $sIndexColumn = "article_image_id";
-     
-    /* DB table to use */
-    $sTable = "dmm_article_images";
-     
+          
     /* Database connection information */
     $gaSql['user']       = $username_dmm_db_connection;
     $gaSql['password']   = $password_dmm_db_connection;
@@ -74,11 +67,8 @@
      * SQL queries
      * Get data to display
      */
-    $sQuery = "
-        SELECT ".str_replace(" , ", " ", implode(", ", $aColumns))."
-        FROM   $sTable
-        $sWhere
-    ";
+    $sQuery = "SELECT article_id, article_image_weight, article_image_filename, article_image_caption, 'issue' as article_image_from FROM dmm_issue_article_images $sWhere AND issue_id = ".mysql_real_escape_string( $_GET['piid'] ) . " ORDER BY article_image_weight";
+	
 	
 	//echo $sQuery; exit;
     $rResult = mysql_query( $sQuery, $gaSql['link'] ) or fatal_error( 'MySQL Error: ' . mysql_errno() );
@@ -89,13 +79,13 @@
     $flag=0; 
     while ( $aRow = mysql_fetch_array( $rResult ) )
     {
-        $row .= '<li><a href="img/' . $aRow['article_image_filename'] . '"><img data-caption="' . $aRow['article_image_caption'] . '" src="img/' . $aRow['article_image_filename'] . '"  naked=true height="100" link=false /></a></li>';
+        $row .= '<li><a href="img/' . $aRow['article_image_filename'] . '"><img data-caption="' . htmlspecialchars($aRow['article_image_caption']) . '" data-from="' . htmlspecialchars($aRow['article_image_from']) . '" src="img/' . $aRow['article_image_filename'] . '" /><br><small>'.htmlspecialchars($aRow['article_image_caption']).'</small></a></li>';
         $flag=true;
 	}
 	
 	if($flag){
 	    $row  = '<hr/>
-		<div class="clearing-assembled"><div><a href="#" class="clearing-close">×</a><div class="visible-img" style="display: none"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" alt=""><p class="clearing-caption"></p><a href="#" class="clearing-main-prev"><span></span></a><a href="#" class="clearing-main-next"><span></span></a></div><div class="carousel"><ul class="clearing-thumbs small-block-grid-5" data-clearing="">' . $row . '</ul></div></div></div>';
+		<ul class="clearing-thumbs small-block-grid-5" data-clearing >' . $row . '</ul><script>$(document).foundation();</script>';
 	}
     $output = $row;
 	

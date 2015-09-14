@@ -16,6 +16,9 @@
     <link rel="stylesheet" href="/css/foundation-datepicker.css" />    
     <link href="//cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
+    <!--[if $recaptcha]-->
+    <script src='https://www.google.com/recaptcha/api.js?hl=<!--[$smarty.session.language]-->'></script>
+    <!--[/if]-->
 <!--[/if]-->
     <script src="/js/modernizr.js"></script>
 <!--[if $smarty.get.ta==101]-->

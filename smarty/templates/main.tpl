@@ -1,14 +1,11 @@
-<div class="row">
-<!--[if $debug]--><!--[$smarty.template]--><!--[/if]-->
-    <div class="large-12 medium-12 small 12 columns">
-        <div class="row">
+<!--[if $debug]--><span style="color:red;"><!--[$smarty.template]--></span><!--[/if]-->
+    <div class="row">
+        <div class="large-12 medium-12 small 12 columns"> 
 <!--Start Left Blocks-->
             <div class="large-2 medium-1 small-0 columns">
+                <div class="show-for-large-up">
                 <!--[include file="pub_old_issues_block.tpl"]-->
-                <!--[if isset($smarty.session.user_id)]-->
-                    <!--[include file="pubs_admin.tpl"]-->
-                    <!--[include file="articles_admin.tpl"]-->
-                <!--[/if]-->
+                </div>
                 &nbsp;
             </div>
 <!--End Left Blocks-->
@@ -24,25 +21,28 @@
                 <!--[include file="login.tpl"]-->
                 </div>
             <!--[/if]-->
-                <div class="large-2 medium-0 small-0 columns">
-                    <!--[include file="right_block_adds.tpl"]-->          
+                <div class="large-2 medium-1 small-0 columns">
+                <!--[if isset($smarty.session.user_id)]-->
+                    <!--[include file="pubs_admin.tpl"]-->
+                    <!--[include file="articles_admin.tpl"]-->
+                <!--[/if]-->
+                &nbsp;
                 </div>
             </div>               
 <!--End Right Blocks-->
-            <div class="large-0 medium-1 small-0 columns">&nbsp;</div>
-        </div>
-    </div>
-</div>
-<div class="hide-for-large-up"><!-- medium and small only pub area -->
+            <div class="hide-for-large-up"><!-- medium and small only pub area -->
 <!--Start Right Blocks-->
-    <div class="row">
-        <div class="medium-12 small 12 columns">
-            <div class="medium-1 small-0 columns">&nbsp;</div>
-            <div class="medium-10 small-0 columns">
-                <!--[include file="right_block_adds.tpl"]-->           
+                <div class="medium-12 small-12 columns">
+                <!--[include file="pub_old_issues_block.tpl"]-->
+                </div>
+                <div class="medium-12 small-12 columns">
+                <!--[if isset($smarty.session.user_id)]-->
+                    <!--[include file="pubs_admin.tpl"]-->
+                    <!--[include file="articles_admin.tpl"]-->
+                <!--[/if]-->
+                </div>
             </div>
             <div class="medium-1 small-0 columns">&nbsp;</div>
         </div>
     </div>
 <!--End Right Blocks-->
-</div>

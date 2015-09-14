@@ -1,5 +1,6 @@
 <?php 
      require_once("../Connections/dmm-db-info.php");
+     require_once("clean_all.php");
     /*
      * Script:    DataTables server-side script for PHP and MySQL
      * Copyright: 2010 - Allan Jardine, 2012 - Chris Wright

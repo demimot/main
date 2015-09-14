@@ -3,7 +3,7 @@
       $smarty = new Smarty();    
       require($_SERVER["DOCUMENT_ROOT"] . '/smarty/configs/smartyconf.php');
 	  require($_SERVER["DOCUMENT_ROOT"] . '/vatrack/VATrack.php');
-	  $smarty->assign('name', 'DemiMot');
+	  $smarty->assign('name', DMM_TITLE);
 
       /* Clean up all POST/GET variable agains JS/SQL injection; */ 
 
@@ -15,7 +15,8 @@
       }
 
       /* the actual front controller to load everything a page could ever want */
-      include "dmm-header.php";
+	  require($_SERVER["DOCUMENT_ROOT"] . '/config/dmm-header.php');
+     // include "dmm-header.php";
 
       /* Track user activity */
       VATrack();

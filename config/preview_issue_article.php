@@ -1,5 +1,6 @@
 <?php 
      require_once("../Connections/dmm-db-info.php");
+     require_once("clean_all.php");
     /*
      * Script:    Preview Issue Article 
      * Copyright: 2010 - Allan Jardine, 2012 - Chris Wright, 2015 Julio Soares
@@ -90,9 +91,9 @@
     while ( $aRow = mysql_fetch_array( $rResult ) )
     {
 		$row  = ($aRow['article_ready']) ? "<h6>Ready for publishing</h6>"  : "<h6>NOT Ready</h6>";
-        $row .= "<h2>" . $aRow['article_title'] . "</h2>";
-        $row .= "<h3>" . $aRow['article_subtitle'] . "</h3>";
-        $row .= p_tag_this($aRow['article_body']);		 
+        $row .= "<h2>" . htmlspecialchars($aRow['article_title']) . "</h2>";
+        $row .= "<h3>" . htmlspecialchars($aRow['article_subtitle']) . "</h3>";
+        $row .= p_tag_this(htmlspecialchars($aRow['article_body']));		 
         $output = $row;
     }
 	
@@ -117,11 +118,14 @@ function p_tag_this($input)
 
 function p_TagsRecursive($input)
 {
+    static $count_p=0;
     $regex = '#\R+#';
 
     if (is_array($input)) {
-        $input = '</p><p>'.$input[1];
+        $input = '</hr ></p><div class = "placehold num-' . intval($count_p) . '"></div><p>'.$input[1];
+		$count_p++;
     }
+
     return preg_replace_callback($regex, 'p_TagsRecursive', $input);
 }
 

@@ -1,5 +1,6 @@
 <?php 
 
+require_once("clean_all.php");
 
 /* Init sction */
 $registrant_email            = $_POST['VisitorEmail'];
